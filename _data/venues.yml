@@ -1,0 +1,11 @@
+"ICML":
+  url: https://icml.cc/
+  color: "#2b6cb0"
+
+"ICLR":
+  url: https://iclr.cc/
+  color: "#2f855a"
+
+"CVPR":
+  url: https://cvpr.thecvf.com/
+  color: "#c05621"

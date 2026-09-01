@@ -1,0 +1,76 @@
+cv:
+  name: Huayu Deng
+  label: PhD Student
+  email: denghuayu86@163.com
+  location: Shanghai, China
+  image: ""
+  summary: PhD student at Shanghai Jiao Tong University working on deep learning, reinforcement learning, LLM post-training, and AI for physics. Currently a research intern at RedNote.
+
+  social_networks:
+    - network: GitHub
+      username: hbell99
+
+  sections:
+    Education:
+      - institution: Shanghai Jiao Tong University
+        location: Shanghai, China
+        area: Computer Science and Technology (Wu Wenjun Honors Class in AI)
+        studyType: PhD
+        start_date: 2022-09
+        end_date: Present
+        highlights:
+          - "Advisors: Yunbo Wang, Xiaokang Yang"
+          - "Research: deep learning, reinforcement learning, LLM post-training, AI4Physics"
+          - "7 first-/co-authored papers at CCF-A conferences, including an ICML 2026 Oral"
+
+      - institution: Shanghai Jiao Tong University
+        location: Shanghai, China
+        area: Computer Science and Technology (IEEE Honors Class)
+        studyType: B.Eng.
+        start_date: 2018-09
+        end_date: 2022-06
+        highlights:
+          - "GPA 90.83/100, ranked 11/134"
+          - "Outstanding Graduate of SJTU, 2022"
+          - "Zhiyuan Honors Program (top 20% of the School of Engineering)"
+
+    Experience:
+      - company: RedNote (小红书), Pevek Foundation Model Team
+        position: Research Intern
+        location: Shanghai, China
+        start_date: 2026-03
+        end_date: Present
+        summary: Large language model post-training.
+        highlights:
+          - "Worked on the full post-training pipeline of the Pevek foundation model, covering data construction, training configuration, evaluation, and regression testing."
+          - "Ran SFT, OPD, and RL post-training experiments, iterating on data mixtures, hyperparameters, prompt templates, and sampling strategies to improve general and domain-specific capabilities."
+          - "Used MS-Swift and Slime for training, and vLLM/SGLang for inference and evaluation, to support fast experiment iteration."
+
+      - company: Microsoft Research Asia (MSRA)
+        position: Research Intern
+        location: Beijing, China
+        start_date: 2021-07
+        end_date: 2021-12
+        summary: "Conditional graphic layout generation (LayoutFormer++), advised by Jian-Guang Lou and Dongmei Zhang."
+        highlights:
+          - "Proposed LayoutFormer++: a constraint serialization scheme that unifies diverse user constraints into a token sequence, with a Transformer encoder-decoder for sequence-to-sequence conditional layout generation."
+          - "Proposed Decoding Space Restriction, a constraint- and probability-pruning strategy with backtracking to improve constraint satisfaction at inference time."
+          - "Achieved state-of-the-art generation quality and constraint satisfaction on RICO and PubLayNet across 6 layout generation tasks; integrated into Microsoft Office PowerPoint's Designer feature."
+          - "Published at CVPR 2023."
+
+    Awards:
+      - title: First Prize, SJTU Graduate Academic Scholarship
+        awarder: Shanghai Jiao Tong University
+        date: 2022
+
+      - title: Outstanding Graduate (Undergraduate)
+        awarder: Shanghai Jiao Tong University
+        date: 2022
+
+      - title: Zhiyuan Honors Scholarship (Undergraduate)
+        awarder: Shanghai Jiao Tong University
+        date: 2018-2020
+
+    Academic Service:
+      - label: Reviewer
+        details: NeurIPS, ICML, CVPR, ICLR, AAAI
