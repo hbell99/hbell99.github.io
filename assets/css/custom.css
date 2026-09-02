@@ -126,6 +126,19 @@ a:hover {
   color: var(--accent-hover) !important;
 }
 
+/* Headings/nav links that set `style="color: inherit"` should stay that way —
+   the blanket `a { color: accent !important }` above otherwise wins because
+   it carries !important and inline styles without !important lose to it. */
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a,
+.post-title a,
+.navbar-brand a {
+  color: inherit !important;
+}
+
+h1 a:hover, h2 a:hover, h3 a:hover {
+  color: var(--accent) !important;
+}
+
 hr {
   border: 0;
   border-top: 1px solid var(--rule);
@@ -243,6 +256,8 @@ hr {
  * Venue badges (abbr pills next to each publication)
  * -------------------------------------------------------------------------- */
 .badge {
+  display: inline-block;
+  width: auto !important;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
@@ -250,14 +265,22 @@ hr {
   text-transform: uppercase;
   border-radius: var(--r-pill);
   padding: 4px 10px;
-  background: var(--accent-wash);
-  color: var(--accent-hover);
+  background: var(--accent-wash) !important;
+  color: var(--accent-hover) !important;
+}
+
+.badge a {
+  color: inherit !important;
 }
 
 /* ----------------------------------------------------------------------------
- * Publication entries — bordered card per entry, like the reference layout.
+ * Publication entries — bordered, stacked card per entry (bib.liquid renders
+ * a Bootstrap 2-col row: a narrow badge column + a wide content column; the
+ * reference layout instead stacks the badge above a full-width card, so we
+ * collapse the grid here rather than fighting it with column widths).
  * -------------------------------------------------------------------------- */
 .publications .row {
+  display: block;
   border: 1px solid var(--rule);
   border-radius: var(--r-md);
   padding: var(--s-4) var(--s-4) var(--s-3);
@@ -268,6 +291,19 @@ hr {
 .publications .row:hover {
   border-color: var(--rule-strong);
   box-shadow: var(--shadow-sm);
+}
+
+.publications .row > .col,
+.publications .row > [class*="col-sm-"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  flex: none;
+  padding: 0;
+}
+
+.publications .row > .col.abbr {
+  margin-bottom: var(--s-2);
 }
 
 .bibliography .title {
@@ -287,11 +323,28 @@ hr {
   border-bottom: 1px dashed var(--moss-500);
 }
 
+/* Coauthor links: muted with a dotted underline, only turning accent-green
+   on hover — otherwise every name in the author line reads as a loud link. */
+.bibliography .author a {
+  color: var(--ink-2) !important;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--moss-500);
+  text-underline-offset: 2px;
+}
+
+.bibliography .author a:hover {
+  color: var(--accent) !important;
+  text-decoration-color: var(--accent);
+}
+
 .bibliography .periodical {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--ink-3);
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  letter-spacing: 0.04em;
 }
 
 /* ----------------------------------------------------------------------------
