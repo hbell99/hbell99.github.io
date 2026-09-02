@@ -1103,15 +1103,14 @@ html[data-theme='dark'] .publications .bibliography .links .bibtex-copy.is-faile
 .publications .bibliography .periodical em {
   font-family: var(--font-mono);
   font-style: normal;
-  color: var(--accent);
+  color: var(--ink-ochre);
 }
 .publications .bibliography .periodical {
   font-family: var(--font-mono);
-  color: var(--accent);
+  color: var(--ink-ochre);
   font-weight: 600;
   font-size: 0.8125rem;
   letter-spacing: 0.03em;
-  text-transform: uppercase;
 }
 
 /* Venue tag (topic chip sitting beside entries) — filled pill with clear hover/active feedback */
@@ -1305,8 +1304,7 @@ html[data-theme='dark'] .publications .venue-tag.active-filter .venue-name { col
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ink-ochre);
 }
 .selected-paper-card__title {
   margin: 0;
