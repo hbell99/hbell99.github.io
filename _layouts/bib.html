@@ -8,7 +8,12 @@
 {%- endif -%}
 {% assign proceedings = "inproceedings,incollection" | split: ','%}
 {% assign thesis = "thesis,mastersthesis,phdthesis" | split: ','%}
-{% if entry.type == "article" -%}
+{%- comment -%} `short_venue` is a display-only override (e.g. "43rd ICML (Oral)")
+  that isn't part of the entry's real citation fields — it's dropped from the
+  Copy Bib output via filtered_bibtex_keywords, same as abbr/selected/arxiv. {%- endcomment -%}
+{% if entry.short_venue -%}
+  {%- capture entrytype -%}<em>{{entry.short_venue}}</em>{%- endcapture -%}
+{%- elsif entry.type == "article" -%}
   {%- capture entrytype -%}<em>{{entry.journal}}</em>{%- endcapture -%}
 {%- elsif proceedings contains entry.type -%}
   {%- capture entrytype -%}<em>In {{entry.booktitle}}</em> {%- endcapture -%}
