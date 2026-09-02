@@ -5750,7 +5750,7 @@ html[data-theme=dark] .cv h2 {
   font-family: var(--font-serif);
   color: var(--fg-2);
   font-size: var(--fs-lg);
-  max-width: 62ch;
+  max-width: none;
 }
 .post:has(.post-content) .post-header .post-meta {
   font-family: var(--font-mono);
