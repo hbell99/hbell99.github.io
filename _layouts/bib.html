@@ -140,7 +140,8 @@
     </div>
 
     {% if entry.bibtex_show -%}
-    <div class="bibtex-source" data-entry-key="{{ entry.key }}" hidden aria-hidden="true">{{ entry.bibtex | hideCustomBibtex }}</div>
+    {%- assign raw_bib = site.data.raw_bibtex[entry.key] | default: entry.bibtex -%}
+    <div class="bibtex-source" data-entry-key="{{ entry.key }}" hidden aria-hidden="true">{{ raw_bib | hideCustomBibtex }}</div>
     {%- endif %}
   </div>
 </article>
@@ -368,7 +369,8 @@
 
           {% if entry.bibtex_show -%}
           <!-- BibTeX source kept in DOM so the Copy button can read it; hidden visually. -->
-          <div class="bibtex-source" data-entry-key="{{ entry.key }}" hidden aria-hidden="true">{{ entry.bibtex | hideCustomBibtex }}</div>
+          {%- assign raw_bib = site.data.raw_bibtex[entry.key] | default: entry.bibtex -%}
+    <div class="bibtex-source" data-entry-key="{{ entry.key }}" hidden aria-hidden="true">{{ raw_bib | hideCustomBibtex }}</div>
           {%- endif %}
         </div>
       </div>
