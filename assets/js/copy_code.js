@@ -1,23 +1,43 @@
-// create element for copy button in code blocks
+// create element for copy button and wrap button in code blocks
 var codeBlocks = document.querySelectorAll("pre");
 codeBlocks.forEach(function (codeBlock) {
+  if (codeBlock.closest(".post-cite")) {
+    return;
+  }
+
   if (
-    (codeBlock.querySelector("pre:not(.lineno)") || codeBlock.querySelector("code")) &&
-    codeBlock.querySelector("code:not(.language-chartjs)") &&
-    codeBlock.querySelector("code:not(.language-diff2html)") &&
-    codeBlock.querySelector("code:not(.language-echarts)") &&
-    codeBlock.querySelector("code:not(.language-geojson)") &&
-    codeBlock.querySelector("code:not(.language-mermaid)") &&
-    codeBlock.querySelector("code:not(.language-plotly)") &&
-    codeBlock.querySelector("code:not(.language-vega_lite)")
+    codeBlock.querySelector("pre:not(.lineno)") ||
+    codeBlock.querySelector("code")
   ) {
-    // create copy button
+    // Set default wrap for code blocks
+    codeBlock.classList.add("wrapped");
+
+    // Create wrap button
+    var wrapButton = document.createElement("button");
+    wrapButton.className = "wrap-toggle";
+    wrapButton.type = "button";
+    wrapButton.ariaLabel = "Toggle code wrap";
+    wrapButton.innerHTML = '<i class="fas fa-align-left"></i>';
+    codeBlock.append(wrapButton);
+
+    // Create copy button
     var copyButton = document.createElement("button");
     copyButton.className = "copy";
     copyButton.type = "button";
     copyButton.ariaLabel = "Copy code to clipboard";
     copyButton.innerText = "Copy";
-    copyButton.innerHTML = '<i class="fa-solid fa-clipboard"></i>';
+    copyButton.innerHTML = '<i class="fas fa-clipboard"></i>';
+    codeBlock.append(copyButton);
+
+    // Toggle wrap on/off
+    wrapButton.addEventListener("click", function () {
+      codeBlock.classList.toggle("wrapped");
+      if (codeBlock.classList.contains("wrapped")) {
+        wrapButton.innerHTML = '<i class="fas fa-align-left"></i>';
+      } else {
+        wrapButton.innerHTML = '<i class="fas fa-arrows-alt-h"></i>';
+      }
+    });
 
     // get code from code block and copy to clipboard
     copyButton.addEventListener("click", function () {
@@ -34,23 +54,13 @@ codeBlocks.forEach(function (codeBlock) {
       }
       window.navigator.clipboard.writeText(code);
       copyButton.innerText = "Copied";
-      copyButton.innerHTML = '<i class="fa-solid fa-clipboard-check"></i>';
+      copyButton.innerHTML = '<i class="fas fa-clipboard-check"></i>';
       var waitFor = 3000;
 
       setTimeout(function () {
         copyButton.innerText = "Copy";
-        copyButton.innerHTML = '<i class="fa-solid fa-clipboard"></i>';
+        copyButton.innerHTML = '<i class="fas fa-clipboard"></i>';
       }, waitFor);
     });
-
-    // create wrapper div
-    var wrapper = document.createElement("div");
-    wrapper.className = "code-display-wrapper";
-
-    // add copy button and code block to wrapper div
-    const parent = codeBlock.parentElement;
-    parent.insertBefore(wrapper, codeBlock);
-    wrapper.append(codeBlock);
-    wrapper.append(copyButton);
   }
 });
