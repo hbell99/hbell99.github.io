@@ -115,6 +115,9 @@
       {%- if primary_url %}
         <a href="{{ primary_url }}" class="btn btn-sm z-depth-0" role="button">{{ primary_label }}</a>
       {%- endif %}
+      {%- if entry.openreview %}
+        <a href="https://openreview.net/forum?id={{ entry.openreview }}" class="btn btn-sm z-depth-0" role="button">OpenReview</a>
+      {%- endif %}
       {%- if pdf_url %}
         <a href="{{ pdf_url }}" class="btn btn-sm z-depth-0" role="button">PDF</a>
       {%- endif %}
@@ -281,6 +284,9 @@
           <div class="links">
           {%- if primary_url %}
             <a href="{{ primary_url }}" class="btn btn-sm z-depth-0" role="button">{{ primary_label }}</a>
+          {%- endif %}
+          {%- if entry.openreview %}
+            <a href="https://openreview.net/forum?id={{ entry.openreview }}" class="btn btn-sm z-depth-0" role="button">OpenReview</a>
           {%- endif %}
           {%- if entry.bibtex_show %}
             <button type="button" class="bibtex-copy btn btn-sm z-depth-0" data-entry-key="{{ entry.key }}" aria-label="Copy BibTeX to clipboard" title="Click to copy BibTeX">
