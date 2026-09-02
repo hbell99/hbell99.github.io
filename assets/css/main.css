@@ -3748,7 +3748,7 @@ pre code {
 @media (min-width: 992px) {
   .post:has(.post-header.hero) > article {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-columns: minmax(0, 1fr) 220px;
     grid-column-gap: var(--s-6);
     align-items: start;
   }
@@ -3757,8 +3757,8 @@ pre code {
     grid-row: 1;
     float: none !important;
     margin: 0 !important;
-    max-width: 260px;
-    width: 260px;
+    max-width: 220px;
+    width: 220px;
   }
   .post:has(.post-header.hero) > article > .clearfix {
     grid-column: 1;
@@ -4718,6 +4718,10 @@ html[data-theme=dark] .publications .bibliography .links .bibtex-copy.is-failed 
   color: var(--ink-ochre) !important;
 }
 
+.publications .pub-meta-row .pub-meta-venue em {
+  color: inherit !important;
+}
+
 .publications .pub-meta-row .selected-mark {
   margin-right: 0;
 }
@@ -4973,6 +4977,14 @@ html[data-theme=dark] .publications .venue-tag.active-filter .venue-name {
      this one didn't. */
   text-transform: none !important;
   color: var(--ink-ochre) !important;
+}
+
+/* `p, h1, ..., em, div, li, span, strong { color: var(--global-text-color) }`
+   (legacy al-folio compat rule) matches <em> directly, and a direct match
+   always beats an inherited value regardless of specificity — so the venue
+   color above never reached the journal name wrapped in <em>. */
+.selected-paper-card__venue em {
+  color: inherit !important;
 }
 
 .selected-paper-card__title {
