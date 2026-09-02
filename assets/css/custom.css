@@ -1,34 +1,246 @@
-@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap");
 
+/* ----------------------------------------------------------------------------
+ * Design tokens — adapted from xihuai18.github.io's paper/ink + moss palette.
+ * -------------------------------------------------------------------------- */
 :root {
-  --global-theme-color: #2b6cb0;
-  --global-hover-color: #1a4d80;
+  --paper: #ffffff;
+  --paper-2: #f6f5f1;
+  --ink: #111418;
+  --ink-2: #3a3f47;
+  --ink-3: #6b7078;
+  --rule: rgba(17, 20, 24, 0.1);
+  --rule-strong: rgba(17, 20, 24, 0.22);
+
+  --moss-50: #eef6ed;
+  --moss-500: #2f7a2a;
+  --moss-600: #215c1f;
+  --moss-700: #16401a;
+
+  --accent: var(--moss-500);
+  --accent-hover: var(--moss-600);
+  --accent-wash: var(--moss-50);
+
+  --font-display: "Fraunces", "Noto Serif SC", "Source Serif 4", Georgia, serif;
+  --font-serif: "Source Serif 4", "Noto Serif SC", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-pill: 999px;
+
+  --shadow-xs: 0 1px 0 rgba(17, 20, 24, 0.04);
+  --shadow-sm: 0 1px 2px rgba(17, 20, 24, 0.06), 0 1px 1px rgba(17, 20, 24, 0.04);
+  --shadow-md: 0 8px 24px -10px rgba(17, 20, 24, 0.14), 0 2px 6px rgba(17, 20, 24, 0.06);
+
+  --t-fast: 140ms cubic-bezier(0.22, 1, 0.36, 1);
+  --t-med: 240ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* al-folio's own theme variables — keep these in sync with the palette above
+     so components that already read --global-* pick up the same accent. */
+  --global-theme-color: var(--accent);
+  --global-hover-color: var(--accent-hover);
+  --global-bg-color: var(--paper);
+  --global-text-color: var(--ink);
+  --global-text-color-light: var(--ink-3);
+  --global-divider-color: var(--rule);
+  --global-card-bg-color: var(--paper);
 }
 
+/* ----------------------------------------------------------------------------
+ * Typography
+ * -------------------------------------------------------------------------- */
 body {
-  font-family:
-    "Inter",
-    "Noto Sans SC",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Helvetica,
-    Arial,
-    sans-serif;
-  line-height: 1.65;
+  font-family: var(--font-serif);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-h3,
-h4,
-h6,
+::selection {
+  background: #d6eacf;
+  color: var(--ink);
+}
+
+h1, h2, h3, h4, h6,
 .navbar-brand,
-.card-title {
-  font-family: "Source Serif 4", "Noto Serif SC", Georgia, serif;
+.card-title,
+.post-title {
+  font-family: var(--font-display);
   font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
 }
 
+a {
+  color: var(--accent) !important;
+}
+
+a:hover {
+  color: var(--accent-hover) !important;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: var(--s-5) 0;
+}
+
+/* ----------------------------------------------------------------------------
+ * Homepage header + profile portrait
+ * -------------------------------------------------------------------------- */
+.post-header {
+  padding-bottom: var(--s-4);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--s-5);
+}
+
+.post-header .desc {
+  font-family: var(--font-serif);
+  color: var(--ink-2);
+}
+
+.profile img.img-fluid {
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile .more-info {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+/* ----------------------------------------------------------------------------
+ * Cards (used for CV sections, projects, books)
+ * -------------------------------------------------------------------------- */
 .card {
-  border-radius: 0.5rem;
+  background: var(--paper);
+  border: 1px solid var(--rule) !important;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.card-title {
+  font-size: 1.5rem;
+}
+
+.card-text {
+  font-family: var(--font-serif);
+  color: var(--ink-2);
+}
+
+/* ----------------------------------------------------------------------------
+ * Buttons (publication links: PDF / Code / arXiv / Bib …)
+ * -------------------------------------------------------------------------- */
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  border-radius: var(--r-sm);
+  transition: all var(--t-fast);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.btn-outline-primary:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+/* ----------------------------------------------------------------------------
+ * Venue badges (abbr pills next to each publication)
+ * -------------------------------------------------------------------------- */
+.badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: var(--r-pill);
+  padding: 4px 10px;
+}
+
+/* ----------------------------------------------------------------------------
+ * Publication entries
+ * -------------------------------------------------------------------------- */
+.bibliography .title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.bibliography .author {
+  font-family: var(--font-serif);
+  color: var(--ink-2);
+}
+
+.bibliography .author em {
+  color: var(--ink);
+  font-weight: 600;
+  font-style: normal;
+  border-bottom: 1px dashed var(--moss-500);
+}
+
+.bibliography .periodical {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+
+/* ----------------------------------------------------------------------------
+ * Navbar
+ * -------------------------------------------------------------------------- */
+.navbar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--rule) !important;
+  box-shadow: none !important;
+  font-family: var(--font-sans);
+}
+
+.navbar .nav-link {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+  color: var(--ink) !important;
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+
+.navbar .nav-link:hover {
+  color: var(--accent) !important;
+  background: var(--paper-2) !important;
+}
+
+/* ----------------------------------------------------------------------------
+ * Footer
+ * -------------------------------------------------------------------------- */
+footer {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ink-3);
+  background: var(--paper) !important;
+  border-top: 1px solid var(--rule);
+}
+
+footer a {
+  color: var(--accent) !important;
 }
