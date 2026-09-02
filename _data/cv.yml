@@ -1,10 +1,8 @@
 cv:
   name: Huayu Deng
-  label: PhD Student
+  headline: PhD student at Shanghai Jiao Tong University working on deep learning, reinforcement learning, LLM post-training, and AI for physics. Currently a research intern at RedNote.
   email: denghuayu86@163.com
   location: Shanghai, China
-  image: ""
-  summary: PhD student at Shanghai Jiao Tong University working on deep learning, reinforcement learning, LLM post-training, and AI for physics. Currently a research intern at RedNote.
 
   social_networks:
     - network: GitHub
@@ -17,7 +15,7 @@ cv:
         area: Computer Science and Technology (Wu Wenjun Honors Class in AI)
         studyType: PhD
         start_date: 2022-09
-        end_date: Present
+        end_date: present
         highlights:
           - "Advisors: Yunbo Wang, Xiaokang Yang"
           - "Research: deep learning, reinforcement learning, LLM post-training, AI4Physics"
@@ -39,7 +37,7 @@ cv:
         position: Research Intern
         location: Shanghai, China
         start_date: 2026-03
-        end_date: Present
+        end_date: present
         summary: Large language model post-training.
         highlights:
           - "Worked on the full post-training pipeline of the Pevek foundation model, covering data construction, training configuration, evaluation, and regression testing."
@@ -59,16 +57,16 @@ cv:
           - "Published at CVPR 2023."
 
     Awards:
-      - title: First Prize, SJTU Graduate Academic Scholarship
-        awarder: Shanghai Jiao Tong University
+      - name: First Prize, SJTU Graduate Academic Scholarship
+        summary: Awarded by Shanghai Jiao Tong University
         date: 2022
 
-      - title: Outstanding Graduate (Undergraduate)
-        awarder: Shanghai Jiao Tong University
+      - name: Outstanding Graduate (Undergraduate)
+        summary: Awarded by Shanghai Jiao Tong University
         date: 2022
 
-      - title: Zhiyuan Honors Scholarship (Undergraduate)
-        awarder: Shanghai Jiao Tong University
+      - name: Zhiyuan Honors Scholarship (Undergraduate)
+        summary: Awarded by Shanghai Jiao Tong University
         date: 2018-2020
 
     Academic Service:
