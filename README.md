@@ -1,332 +1,581 @@
-# al-folio
+# Xihuai Wang’s Website
 
-<div align="center">
+[![Deploy](https://github.com/xihuai18/xihuai18.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/xihuai18/xihuai18.github.io/actions/workflows/deploy.yml)
 
-[![Preview](readme_preview/al-folio-preview.png)](https://alshedivat.github.io/al-folio/)
+Source code for: **https://xihuai18.github.io**
 
-**A simple, clean, and responsive [Jekyll](https://jekyllrb.com/) starter for academic websites.**
-
-_In `v1.x`, al-folio is a **thin starter, not a theme**: the runtime ships as independently versioned plugin gems, so you pick up fixes and features by bumping a pinned version in your `Gemfile` instead of merging theme internals into your site._
+A personal academic website built with [Jekyll](https://jekyllrb.com/) and the [al-folio](https://github.com/alshedivat/al-folio) theme.
 
 ---
 
-[![deploy](https://github.com/alshedivat/al-folio/actions/workflows/deploy.yml/badge.svg)](https://github.com/alshedivat/al-folio/actions/workflows/deploy.yml)
-[![Maintainers](https://img.shields.io/badge/maintainers-4-success.svg)](#maintainers)
-[![GitHub contributors](https://img.shields.io/github/contributors/alshedivat/al-folio.svg)](https://github.com/alshedivat/al-folio/graphs/contributors/)
+## Table of Contents
 
-[![Docker Image Version](https://img.shields.io/docker/v/amirpourmand/al-folio?sort=semver&label=docker%20image&color=blueviolet)](https://hub.docker.com/r/amirpourmand/al-folio)
-[![Docker Image Size](https://img.shields.io/docker/image-size/amirpourmand/al-folio?sort=date&label=docker%20image%20size&color=blueviolet)](https://hub.docker.com/r/amirpourmand/al-folio)
-[![Docker Pulls](https://img.shields.io/docker/pulls/amirpourmand/al-folio?color=blueviolet)](https://hub.docker.com/r/amirpourmand/al-folio)
-
-[![GitHub release](https://img.shields.io/github/v/release/alshedivat/al-folio)](https://github.com/alshedivat/al-folio/releases/latest)
-[![GitHub license](https://img.shields.io/github/license/alshedivat/al-folio?color=blue)](https://github.com/alshedivat/al-folio/blob/main/LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/alshedivat/al-folio)](https://github.com/alshedivat/al-folio/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/alshedivat/al-folio)](https://github.com/alshedivat/al-folio/fork)
-
-[![Code Wiki](https://img.shields.io/badge/Code_Wiki-ask_about_repo-blue?logo=googlegemini)](https://codewiki.google/github.com/alshedivat/al-folio)
-[![DeepWiki](https://img.shields.io/badge/DeepWiki-ask_about_repo-lightcyan)](https://deepwiki.com/alshedivat/al-folio)
-
-</div>
-
-## Getting started
-
-**⚠️ Important: Use "Use this template" (not fork)**
-
-When creating your own website with al-folio, you have two options:
-
-- ✅ **Recommended:** Click "[Use this template](https://github.com/new?template_name=al-folio&template_owner=alshedivat)" – This creates a clean copy that is independent from the main al-folio repository. Changes you make to your site won't be accidentally submitted to al-folio as pull requests.
-- ❌ **Not recommended:** Forking the repository – This keeps a link to the main al-folio repo, making it easy to accidentally submit your personal site changes as contributions to our project.
-
-**If you already forked:** Don't worry! You can still work with your fork normally. Just make sure to:
-
-1. Make changes on a dedicated branch (e.g., `my-site-updates`)
-2. When pushing changes, always verify you're pushing to **your own repository**, not the main al-folio repository
-3. Never create pull requests to `alshedivat/al-folio` unless you're intentionally contributing improvements that benefit all users
-
-For quick setup, see [docs/QUICKSTART.md](docs/QUICKSTART.md).
-
-Want to learn more about Jekyll? Check out [this tutorial](https://www.taniarascia.com/make-a-static-website-with-jekyll/). Why Jekyll? Read [Andrej Karpathy's blog post](https://karpathy.github.io/2014/07/01/switching-to-jekyll/)! Why write a blog? Read [Rachel Thomas blog post](https://medium.com/@racheltho/why-you-yes-you-should-blog-7d2544ac1045).
-
-## Table Of Contents
-
-<!--ts-->
-
-- [al-folio](#al-folio)
-  - [Getting started](#getting-started)
-  - [Table Of Contents](#table-of-contents)
-  - [Installing and Deploying](#installing-and-deploying)
-  - [Customizing](#customizing)
-  - [Plugin Ecosystem](#plugin-ecosystem)
-  - [Using AI Agents](#using-ai-agents)
-    - [Codex](#codex)
-    - [Claude](#claude)
-    - [Copilot And Other Agents](#copilot-and-other-agents)
-  - [Documentation](#documentation)
-  - [Features](#features)
-    - [Light and dark mode](#light-and-dark-mode)
-    - [The pages you get out of the box](#the-pages-you-get-out-of-the-box)
-    - [Writing](#writing)
-    - [GitHub repositories and stats](#github-repositories-and-stats)
-  - [User community](#user-community)
-  - [Lighthouse PageSpeed Insights](#lighthouse-pagespeed-insights)
-    - [Desktop](#desktop)
-    - [Mobile](#mobile)
-  - [FAQ](#faq)
-  - [Contributing](#contributing)
-    - [Code quality checks](#code-quality-checks)
-    - [Maintainers](#maintainers)
-    - [All Contributors](#all-contributors)
-  - [Star History](#star-history)
-  - [License](#license)
-
-<!--te-->
-
-## Installing and Deploying
-
-For installation and deployment details please refer to [docs/INSTALL.md](docs/INSTALL.md).
-
-## Customizing
-
-For customization details please refer to [docs/CUSTOMIZE.md](docs/CUSTOMIZE.md).
-
-## Plugin Ecosystem
-
-`al-folio` is a thin starter in `v1.x`. Runtime features are plugin-owned and published as Ruby gems.
-
-- Ownership boundaries: [docs/BOUNDARIES.md](docs/BOUNDARIES.md)
-- Plugin catalog metadata: [`_data/featured_plugins.yml`](_data/featured_plugins.yml)
-- Rendered plugin catalog: [alshedivat.github.io/al-folio/plugins/](https://alshedivat.github.io/al-folio/plugins/)
-- Plugin catalog page source: [`_pages/plugins.md`](_pages/plugins.md)
-
-The catalog page is deliberately kept out of the navbar (`nav: false`) so the demo site's chrome stays unchanged; reach it through the links above.
-
-Naming convention:
-
-- Theme-coupled plugins use `al-folio-<feature>` repos and `al_folio_<feature>` gem/plugin ids.
-- Reusable plugins can use `al-<feature>` or neutral naming.
-
-Featured plugins and bundled starter plugins are different tracks. Bundling requires explicit updates to [Gemfile](Gemfile) and [\_config.yml](_config.yml).
-Plugin-owned changes should be made in the owning `al-org-dev` plugin repository, not by copying runtime assets into this starter.
-The bundled v1 plugin repos are:
-
-- [`al-folio-core`](https://github.com/al-org-dev/al-folio-core): shared layouts, includes, style/runtime primitives, and upgrade contracts
-- [`al-folio-cv`](https://github.com/al-org-dev/al-folio-cv): CV rendering
-- [`al-folio-distill`](https://github.com/al-org-dev/al-folio-distill): Distill layouts and runtime assets
-- [`al-folio-bootstrap-compat`](https://github.com/al-org-dev/al-folio-bootstrap-compat): temporary Bootstrap compatibility runtime
-- [`al-folio-upgrade`](https://github.com/al-org-dev/al-folio-upgrade): v1 upgrade audit/report/codemods
-- [`al-icons`](https://github.com/al-org-dev/al-icons): icon loading
-- [`al-search`](https://github.com/al-org-dev/al-search): search runtime
-- [`al-citations`](https://github.com/al-org-dev/al-citations): publication/citation helpers
-- [`al-ext-posts`](https://github.com/al-org-dev/al-ext-posts): external post ingestion
-- [`al-analytics`](https://github.com/al-org-dev/al-analytics), [`al-comments`](https://github.com/al-org-dev/al-comments), [`al-cookie`](https://github.com/al-org-dev/al-cookie), [`al-img-tools`](https://github.com/al-org-dev/al-img-tools), [`al-math`](https://github.com/al-org-dev/al-math), [`al-charts`](https://github.com/al-org-dev/al-charts), and [`al-newsletter`](https://github.com/al-org-dev/al-newsletter): feature-specific runtime and integration behavior
-
-## Using AI Agents
-
-`al-folio` v1.x is designed for agent-assisted setup and migration. Agents should read [AGENTS.md](AGENTS.md) first, then use [docs/BOUNDARIES.md](docs/BOUNDARIES.md) to route changes to the starter or the owning plugin repo.
-
-For existing customized forks, the recommended migration path is to ask an agent to use the [al-folio v1 migration skill](.agents/skills/al-folio-v1-migration/SKILL.md). The skill walks through creating a disposable migration branch, bringing site-owned content/config/data onto the v1 starter contract, running `al_folio_upgrade`, auditing local overrides, and validating the build. This is preferred over a manual file-by-file upgrade because v1 runtime ownership moved into plugins and local overrides need explicit drift tracking.
-
-The canonical skills live in [.agents/skills/](.agents/skills/). They are also exposed through `.codex/skills/` and `.claude/skills/` symlinks for agents that discover skills from tool-specific directories.
-
-### Codex
-
-Codex can use the repo-local skills:
-
-- [al-folio bootstrap](.agents/skills/al-folio-bootstrap/SKILL.md): create and configure a new v1 site.
-- [al-folio v1 migration](.agents/skills/al-folio-v1-migration/SKILL.md): migrate customized forks and audit local overrides.
-
-Useful first prompts:
-
-- "Use the al-folio bootstrap skill to configure my new site."
-- "Use the al-folio v1 migration skill to migrate this customized fork and run the override audit."
-
-### Claude
-
-Claude should start from [CLAUDE.md](CLAUDE.md), which imports [AGENTS.md](AGENTS.md). For setup or migration tasks, use the matching skill from `.claude/skills/`, which points to the canonical `.agents/skills/` directory.
-
-### Copilot And Other Agents
-
-Copilot should follow [.github/copilot-instructions.md](.github/copilot-instructions.md) and the specialized agents in [.github/agents/](.github/agents/). Other agents should follow the same rule: keep starter work in this repo, route runtime behavior to the owning `al-org-dev` plugin, and run `bundle exec al-folio upgrade overrides audit` whenever local overrides are added or retained.
-
-## Documentation
-
-Comprehensive guides for all aspects of your al-folio website:
-
-- **[Documentation index](docs/README.md)** – All user, maintainer, and migration guides
-- **[Quick Start](docs/QUICKSTART.md)** – Get running in 5 minutes
-- **[Installation & Deployment](docs/INSTALL.md)** – Set up your site on GitHub Pages or other platforms
-- **[Customization Guide](docs/CUSTOMIZE.md)** – Personalize your website (CVs, publications, themes, etc.)
-- **[Troubleshooting](docs/TROUBLESHOOTING.md)** – Fix common issues (deployment, build, styling, content)
-- **[FAQ](docs/FAQ.md)** – Frequently asked questions and solutions
-- **[Analytics](docs/ANALYTICS.md)** – Add website analytics and visitor tracking
-- **[SEO Guide](docs/SEO.md)** – Optimize for search engines and improve discoverability
-- **[Plugin Catalog](https://alshedivat.github.io/al-folio/plugins/)** – Featured and bundled plugin metadata ([page source](_pages/plugins.md))
-
-## Features
-
-Everything below ships with the starter. Rows marked **setup** render nothing until you supply a key, ID or credential — bundling a plugin is not the same as switching the feature on. Each feature is owned by a versioned plugin — see [`docs/BOUNDARIES.md`](docs/BOUNDARIES.md) for the full ownership table, and [Plugin Ecosystem](#plugin-ecosystem) for how to add or remove one.
-
-| Feature                                                                         | Plugin                           | Configure                                                                           |
-| ------------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
-| Pages, layouts, navigation, light/dark mode, theming                            | `al_folio_core`                  | [Changing theme color](docs/CUSTOMIZE.md#changing-theme-color)                      |
-| Publications from BibTeX                                                        | `al_folio_core` + jekyll-scholar | [Adding a new publication](docs/CUSTOMIZE.md#adding-a-new-publication)              |
-| CV from RenderCV or JSONResume                                                  | `al_folio_cv`                    | [Modifying the CV information](docs/CUSTOMIZE.md#modifying-the-cv-information)      |
-| Distill-style posts                                                             | `al_folio_distill`               | [the example post](https://alshedivat.github.io/al-folio/blog/2021/distill/)        |
-| Math, TikZ diagrams                                                             | `al_math`                        | [the math post](https://alshedivat.github.io/al-folio/blog/2015/math/)              |
-| Charts, mermaid, plotly                                                         | `al_charts`                      | [the charts post](https://alshedivat.github.io/al-folio/blog/2025/plotly/)          |
-| Image zoom, galleries, sliders, lightbox                                        | `al_img_tools`                   | [the images post](https://alshedivat.github.io/al-folio/blog/2024/advanced-images/) |
-| Full-text search (<kbd>ctrl</kbd> <kbd>k</kbd>)                                 | `al_search`                      | `search_enabled` in [\_config.yml](_config.yml)                                     |
-| Comments (Giscus or Disqus) — **setup**                                         | `al_comments`                    | `giscus:` in [\_config.yml](_config.yml)                                            |
-| Analytics — Google, Cronitor, Pirsch, Openpanel, Cloudflare, Simple — **setup** | `al_analytics`                   | [docs/ANALYTICS.md](docs/ANALYTICS.md)                                              |
-| GDPR cookie consent, gating analytics until opt-in — **setup**                  | `al_cookie`                      | [GDPR Cookie Consent Dialog](docs/CUSTOMIZE.md#gdpr-cookie-consent-dialog)          |
-| Newsletter signup — **setup**                                                   | `al_newsletter`                  | `newsletter:` in [\_config.yml](_config.yml)                                        |
-| Citation counts, altmetric/dimensions badges                                    | `al_citations`                   | [Adding a new publication](docs/CUSTOMIZE.md#adding-a-new-publication)              |
-| FontAwesome, Academicons, scholar icons                                         | `al_icons`                       | `third_party_libraries` in [\_config.yml](_config.yml)                              |
-| Posts syndicated from Medium and other feeds                                    | `al_ext_posts`                   | `external_sources:` in [\_config.yml](_config.yml)                                  |
-| Legacy Bootstrap markup (opt-in, removed in v2.0)                               | `al_folio_bootstrap_compat`      | `al_folio.compat.bootstrap` in [\_config.yml](_config.yml)                          |
-| Upgrade audits and codemods                                                     | `al_folio_upgrade`               | `bundle exec al-folio upgrade audit`                                                |
-
-Also included: Open Graph and schema.org previews, an Atom feed at `/feed.xml`, related posts, tabbed content, typograms, responsive image generation, and a Google Scholar citation-refresh workflow.
-
-### Light and dark mode
-
-The theme follows the visitor's system preference and can be toggled with the sun/moon control in the navbar. The choice persists across visits.
-
-<p align="center">
-<img src="readme_preview/light.png" width=400>
-<img src="readme_preview/dark.png" width=400>
-</p>
+- [Xihuai Wang’s Website](#xihuai-wangs-website)
+  - [Table of Contents](#table-of-contents)
+  - [Quick Start](#quick-start)
+    - [Run with Docker (Recommended)](#run-with-docker-recommended)
+    - [Run with Ruby](#run-with-ruby)
+  - [Project Structure](#project-structure)
+  - [Pages Overview](#pages-overview)
+  - [Content Editing Guide](#content-editing-guide)
+    - [Site Settings](#site-settings)
+    - [Blog Posts](#blog-posts)
+    - [Publications](#publications)
+    - [CV](#cv)
+    - [News](#news)
+  - [Writing Features](#writing-features)
+    - [Math \& Code](#math--code)
+    - [Diagrams](#diagrams)
+    - [Images](#images)
+    - [Bilingual Posts](#bilingual-posts)
+    - [Advanced Features](#advanced-features)
+  - [Blog Features](#blog-features)
+    - [Filtering \& Archives](#filtering--archives)
+    - [Table of Contents](#table-of-contents-1)
+    - [Reading Time \& Related Posts](#reading-time--related-posts)
+  - [SEO \& Social](#seo--social)
+    - [Open Graph \& Twitter Cards](#open-graph--twitter-cards)
+    - [Sitemap \& Robots](#sitemap--robots)
+  - [Deployment \& CI/CD](#deployment--cicd)
+    - [Workflows](#workflows)
+    - [Build Pipeline](#build-pipeline)
+    - [Manual Deploy](#manual-deploy)
+  - [Optional Features](#optional-features)
+    - [Feature Toggles](#feature-toggles)
+    - [Additional Features](#additional-features)
+    - [GA4 Page View Tracking](#ga4-page-view-tracking)
+  - [Data Files](#data-files)
+  - [Credits \& License](#credits--license)
 
 ---
 
-### The pages you get out of the box
+## Quick Start
 
-Publications are generated from your BibTeX bibliography, the CV from a single `cv.yml` or `resume.json`, and the people page from `_data`. Everything is content-driven — you edit data files, not templates.
+### Run with Docker (Recommended)
 
-<p align="center">
-  <a href="https://alshedivat.github.io/al-folio/publications/"><img src="readme_preview/publications.png" width=400></a>
-  <a href="https://alshedivat.github.io/al-folio/cv/"><img src="readme_preview/cv.png" width=400></a>
-</p>
-<p align="center">
-  <a href="https://alshedivat.github.io/al-folio/projects/"><img src="readme_preview/projects.png" width=400></a>
-  <a href="https://alshedivat.github.io/al-folio/people/"><img src="readme_preview/people.png" width=400></a>
-</p>
+```bash
+git clone https://github.com/xihuai18/xihuai18.github.io.git
+cd xihuai18.github.io
+docker-compose up
+```
 
-Projects are one of four Jekyll `collections` the starter ships (`news`, `projects`, `books`, `teachings`). You can add your own for courses, talks, or anything else — see [Adding Collections](docs/CUSTOMIZE.md#adding-collections).
+Open **http://localhost:10086** — the site auto-reloads on file changes.
 
----
+### Run with Ruby
 
-### Writing
+```bash
+bundle install
+bundle exec jekyll serve --watch --livereload
+```
 
-Posts support the [distill.pub](https://distill.pub/) layout, MathJax and TikZ, syntax-highlighted code, Jupyter notebooks, charts, image galleries, video and audio embeds.
-
-<p align="center">
-  <a href="https://alshedivat.github.io/al-folio/blog/2021/distill/"><img src="readme_preview/distill.png" width=400></a>
-  <a href="https://alshedivat.github.io/al-folio/blog/2015/math/"><img src="readme_preview/math.png" width=400></a>
-</p>
-<p align="center">
-  <a href="https://alshedivat.github.io/al-folio/blog/2015/code/"><img src="readme_preview/code.png" width=400></a>
-  <a href="https://alshedivat.github.io/al-folio/projects/1_project/"><img src="readme_preview/photos-screenshot.png" width=400></a>
-</p>
+Open **http://localhost:4000**
 
 ---
 
-### GitHub repositories and stats
+## Project Structure
 
-The `/repositories/` page renders repository and profile cards via [github-stats-extended](https://github.com/stats-organization/github-stats-extended). Profile trophies via [github-profile-trophy](https://github.com/ryo-ma/github-profile-trophy) are supported but **off by default**, because that project's free public instance is currently disabled — see [docs/CUSTOMIZE.md](docs/CUSTOMIZE.md#why-trophies-are-off-by-default) to self-host and re-enable.
+```
+├── _config.yml          # Site configuration
+├── _pages/              # Top-level pages (about, blog, cv, publications)
+├── _posts/              # Blog posts (YYYY-MM-DD-slug.md)
+├── _news/               # News/announcements
+├── _bibliography/       # BibTeX files for publications
+│   └── papers.bib
+├── _data/
+│   ├── cv.yml           # CV data
+│   ├── coauthors.yml    # Co-author links
+│   ├── projects.yml     # Projects page cards
+│   └── post_uv.json     # Page view counts (auto-generated)
+├── assets/
+│   ├── img/             # Images
+│   ├── pdf/             # PDFs (papers, slides, etc.)
+│   └── js/              # JavaScript
+├── _layouts/            # Page templates
+├── _includes/           # Reusable components
+├── _plugins/            # Custom Jekyll plugins
+├── _sass/               # Stylesheets
+└── scripts/             # Build scripts (OG image compression, GA4 export)
+```
 
-<p align="center">
-  <a href="https://alshedivat.github.io/al-folio/repositories/"><img src="readme_preview/repositories.png" width="75%"></a>
-</p>
+---
 
-Configure which repositories and profiles appear under [Modifying the user and repository information](docs/CUSTOMIZE.md#modifying-the-user-and-repository-information).
+## Pages Overview
 
-## User community
+| Page             | URL              | Description                                             | Edit                                                  |
+| ---------------- | ---------------- | ------------------------------------------------------- | ----------------------------------------------------- |
+| **Home/About**   | `/`              | Bio, selected papers, news, social links                | [\_pages/about.md](_pages/about.md)                   |
+| **Blog**         | `/blog/`         | Post list with filters, bilingual switcher, view counts | [\_pages/blog.md](_pages/blog.md)                     |
+| **Publications** | `/publications/` | Auto-generated from BibTeX, grouped by year             | [\_bibliography/papers.bib](_bibliography/papers.bib) |
+| **Projects**     | `/projects/`     | Research code and artifacts                             | [\_data/projects.yml](_data/projects.yml)             |
+| **CV**           | `/cv/`           | Rendered from YAML data                                 | [\_data/cv.yml](_data/cv.yml)                         |
+| **News**         | `/news/`         | Grouped announcements feed                              | [\_news/](_news/)                                     |
 
-Academics around the world use **al-folio** for their homepages, blogs, and lab pages, as well as webpages for courses, workshops, conferences, meetups, and more.
+---
 
-**[Browse the showcase &rarr;](docs/SHOWCASE.md)**
+## Content Editing Guide
 
-Want your site listed? Post a request in the _Showcase_ category of [GitHub Discussions](https://github.com/alshedivat/al-folio/discussions) — we review and add entries periodically. Please do not open a pull request for this.
+### Site Settings
 
-## Lighthouse PageSpeed Insights
+Edit [\_config.yml](_config.yml):
 
-### Desktop
+| Setting                                   | Description                  |
+| ----------------------------------------- | ---------------------------- |
+| `title`, `first_name`, `last_name`        | Site title and author name   |
+| `email`, `description`, `keywords`        | Contact and SEO              |
+| `github_username`, `scholar_userid`, etc. | Social links                 |
+| `google_analytics`                        | GA4 measurement ID           |
+| `og_image`                                | Default social preview image |
 
-[![Google Lighthouse PageSpeed Insights](lighthouse_results/desktop/pagespeed.svg)](https://htmlpreview.github.io/?https://github.com/alshedivat/al-folio/blob/main/lighthouse_results/desktop/alshedivat_github_io_al_folio_.html)
+### Blog Posts
 
-Run the test yourself: [Google Lighthouse PageSpeed Insights](https://pagespeed.web.dev/report?url=https%3A%2F%2Falshedivat.github.io%2Fal-folio%2F&form_factor=desktop)
+Create `_posts/YYYY-MM-DD-slug.md`:
 
-### Mobile
+```yaml
+---
+layout: post
+title: "Post Title"
+date: 2025-01-01
+description: "Short description"
+categories: category-name
+tags: [tag1, tag2]
+lang: en # Language: en or zh
+og_image: /assets/img/... # Custom social preview
+# Optional links
+zh_url: /path/to/chinese-version.html
+zhihu_url: https://zhuanlan.zhihu.com/p/...
+wechat_url: https://mp.weixin.qq.com/s/...
+# Optional features
+sidenotes: true # Show footnotes in margin
+giscus_comments: true # Enable comments
+related_posts: false # Disable related posts
+---
+Your content here...
+```
 
-[![Google Lighthouse PageSpeed Insights](lighthouse_results/mobile/pagespeed.svg)](https://htmlpreview.github.io/?https://github.com/alshedivat/al-folio/blob/main/lighthouse_results/mobile/alshedivat_github_io_al_folio_.html)
+### Publications
 
-Run the test yourself: [Google Lighthouse PageSpeed Insights](https://pagespeed.web.dev/report?url=https%3A%2F%2Falshedivat.github.io%2Fal-folio%2F&form_factor=mobile)
+Edit [\_bibliography/papers.bib](_bibliography/papers.bib):
 
-## FAQ
+```bibtex
+@inproceedings{key2025,
+  title     = {Paper Title},
+  author    = {Wang, Xihuai and Others},
+  booktitle = {Conference},
+  year      = {2025},
+  % Display options
+  selected  = {true},        % Show on homepage
+  abbr      = {CONF},        % Badge abbreviation
+  % Links (buttons)
+  pdf       = {paper.pdf},   % or full URL
+  code      = {https://github.com/...},
+  arxiv     = {2501.00000},
+  slides    = {slides.pdf},
+  poster    = {poster.pdf},
+  website   = {https://...},
+  blog      = {https://...},
+  % Content
+  abstract  = {Abstract text...},
+  bibtex_show = {true},      % Show BibTeX button
+  preview   = {image.png},   % Thumbnail in assets/img/publication_preview/
+  % Badges
+  altmetric = {true},
+  dimensions = {true},
+}
+```
 
-For frequently asked questions, please refer to [docs/FAQ.md](docs/FAQ.md).
+### CV
 
-## Contributing
+Edit [\_data/cv.yml](_data/cv.yml):
 
-Contributions to al-folio are very welcome! Before you get started, please take a look at [the guidelines](docs/CONTRIBUTING.md).
+```yaml
+- title: Section Title
+  type: time_table # or: map, list, nested_list
+  contents:
+    - title: Position
+      institution: Organization
+      year: 2020-2025
+      description:
+        - Point 1
+        - Point 2
+```
 
-If you would like to improve documentation or fix a minor inconsistency or bug, please feel free to send a PR directly to `main`. For more complex issues/bugs or feature requests, please open an issue using the appropriate template.
+### News
 
-### Code quality checks
+Create `_news/announcement_N.md`:
 
-CI runs the following on every pull request:
+```yaml
+---
+title: Announcement Title
+date: 2025-01-01
+inline: true
+category: paper # paper | writing | talk | milestone | note
+---
+Content here (supports Markdown and HTML).
+```
 
-- [Prettier](https://prettier.io/) — formatting, including Liquid templates
-- [lychee](https://lychee.cli.rs/) — broken links
-- `npm run lint:style-contract` — enforces the thin-starter boundary described in [AGENTS.md](AGENTS.md)
-- the six `test/integration_*.sh` scripts, and Playwright visual-regression checks
+News items are rendered into the homepage feed and `/news/` index. Individual news pages are not generated.
 
-[Axe](https://github.com/dequelabs/axe-core) accessibility checks are run manually, because the fixes are not always straightforward for contributors without web development experience.
+Configure display in `_config.yml`:
 
-### Maintainers
+```yaml
+news_scrollable: true # Scrollable list if >3 items
+news_limit: 7 # Max items to show on home (blank = all)
+```
 
-Our most active contributors are welcome to join the maintainers team. If you are interested, please reach out!
+---
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://maruan.alshedivat.com"><img src="https://avatars.githubusercontent.com/u/2126561?v=4" width="100px;" alt=""/><br /><sub><b>Maruan</b></sub></a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://rohandebsarkar.github.io"><img src="https://avatars.githubusercontent.com/u/50144004?v=4" width="100px;" alt=""/><br /><sub><b>Rohan Deb Sarkar</b></sub></a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://amirpourmand.ir"><img src="https://avatars.githubusercontent.com/u/32064808?v=4" width="100px;" alt=""/><br /><sub><b>Amir Pourmand</b></sub></a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://george-gca.github.io/"><img src="https://avatars.githubusercontent.com/u/31376482?v=4" width="100px;" alt=""/><br /><sub><b>George</b></sub></a></td>
-    </tr>
-  </tbody>
-</table>
+## Writing Features
 
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
+### Math & Code
 
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+**LaTeX Math** (MathJax):
 
-### All Contributors
+```markdown
+Inline: $E = mc^2$
 
-<a href="https://contrib.rocks">
-  <img src="https://contrib.rocks/image?repo=alshedivat/al-folio&max=500&columns=24" />
-</a>
+Block:
 
-## Star History
+$$
+\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}
+$$
+```
 
-<a href="https://github.com/alshedivat/al-folio/stargazers">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/img/star-history-dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="assets/img/star-history-light.svg" />
-    <img alt="Star history chart for alshedivat/al-folio" src="assets/img/star-history-light.svg" width="820" />
-  </picture>
-</a>
+**Code Blocks** (syntax highlighting):
 
-<sub>Generated by [`bin/generate_star_history.py`](bin/generate_star_history.py) and refreshed automatically by [`star-history.yml`](.github/workflows/star-history.yml).</sub>
+````markdown
+```python
+def hello():
+    print("Hello!")
+```
+````
 
-## License
+### Diagrams
 
-al-folio is available as open source under the terms of the [MIT License](https://github.com/alshedivat/al-folio/blob/main/LICENSE).
+**Mermaid**:
 
-Originally, **al-folio** was based on the [\*folio theme](https://github.com/bogoli/-folio) (published by [Lia Bogoev](https://liabogoev.com) and under the MIT license). Since then, it got a full re-write of the styles and many additional cool features.
+````markdown
+```mermaid
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[OK]
+    B -->|No| D[End]
+```
+````
+
+**Pseudocode**:
+
+````markdown
+```pseudocode
+\begin{algorithm}
+\caption{Algorithm Name}
+\begin{algorithmic}
+\FUNCTION{Name}{$args$}
+  \STATE do something
+\ENDFUNCTION
+\end{algorithmic}
+\end{algorithm}
+```
+````
+
+### Images
+
+**Basic image with zoom**:
+{% raw %}
+
+```liquid
+{% include figure.html path="assets/img/photo.jpg" class="img-fluid" zoomable=true caption="Caption" %}
+```
+
+{% endraw %}
+
+**HTML with zoom**:
+
+```html
+<img src="..." data-zoomable />
+```
+
+### Bilingual Posts
+
+Pair English and Chinese versions:
+
+| Post                | Front Matter                            |
+| ------------------- | --------------------------------------- |
+| English (`*-en.md`) | `lang: en` + `zh_url: /path/to/zh.html` |
+| Chinese (`*-zh.md`) | `lang: zh` + `en_url: /path/to/en.html` |
+
+The blog page shows a language switcher for paired posts.
+
+### Advanced Features
+
+<details>
+<summary><strong>Sidenotes (Margin Notes)</strong></summary>
+
+Add `sidenotes: true` to front matter. Standard footnotes `[^1]` will appear in the margin on desktop.
+
+</details>
+
+<details>
+<summary><strong>Distill-Style Layout</strong></summary>
+
+For academic posts with hover citations:
+
+```yaml
+---
+layout: distill
+distill_citations: true
+distill_footnotes: true
+distill_bibliography: post.bib # in assets/bibliography/
+authors:
+  - name: Your Name
+    affiliations:
+      name: University
+---
+```
+
+Use `<d-cite key="key"></d-cite>` and `<d-footnote>text</d-footnote>`.
+
+</details>
+
+<details>
+<summary><strong>Collapsible Sections</strong></summary>
+
+{% raw %}
+
+```liquid
+{% details "Click to expand" %}
+Hidden content with **Markdown** support.
+{% enddetails %}
+
+{% details open "Expanded by default" %}
+Starts open.
+{% enddetails %}
+```
+
+{% endraw %}
+
+</details>
+
+<details>
+<summary><strong>Comments (Giscus)</strong></summary>
+
+Configure in `_config.yml`:
+
+```yaml
+giscus:
+  repo: username/repo
+  repo_id: ...
+  category: Comments
+  category_id: ...
+```
+
+Add `giscus_comments: true` to post front matter.
+
+</details>
+
+<details>
+<summary><strong>External RSS Import</strong></summary>
+
+Import posts from external feeds:
+
+```yaml
+# _config.yml
+external_sources:
+  - name: medium.com
+    rss_url: https://medium.com/@user/feed
+```
+
+</details>
+
+<details>
+<summary><strong>Code Block Enhancements</strong></summary>
+
+All code blocks automatically include:
+
+- **Copy Button**: One-click copy to clipboard
+- **Wrap Toggle**: Switch between wrapped and horizontal scroll modes
+- **Syntax Highlighting**: Language-aware coloring (Rouge)
+</details>
+
+<details>
+<summary><strong>Footnote Hover Preview</strong></summary>
+
+Standard Markdown footnotes `[^1]` show a tooltip preview on hover, so readers don't need to scroll to the bottom.
+
+</details>
+
+<details>
+<summary><strong>Publication Topic Filter</strong></summary>
+
+On the Publications page, use the topic chips to filter papers by research area (for example `LLM Reasoning & Agency` or `MARL Efficiency`). Click again to clear the filter.
+
+</details>
+
+---
+
+## Blog Features
+
+### Filtering & Archives
+
+The blog page supports client-side filtering:
+
+- **By Year**: Click year links or use `?year=2025` URL parameter
+- **By Category**: Click category links or use `?category=reinforcement-learning`
+- **By Tag**: Click tag links or use `?tag=rlhf`
+- **Combined**: `?year=2025&category=reinforcement-learning&tag=rlhf`
+
+Archives are auto-generated at:
+
+- `/blog/YYYY/` — Posts by year
+- `/blog/tag/TAG/` — Posts by tag
+- `/blog/category/CATEGORY/` — Posts by category
+
+### Table of Contents
+
+Blog posts automatically display a sidebar TOC on desktop:
+
+- Auto-generated from `h2` headings
+- Sticky positioning while scrolling
+- Supports both English ("Contents") and Chinese ("目录") titles
+
+### Reading Time & Related Posts
+
+**Reading Time**: Automatically calculated (~180 words/min) and displayed on blog listings and post pages.
+
+**Related Posts**: Shown at the bottom of each post by default. Disable per-post:
+
+```yaml
+---
+related_posts: false
+---
+```
+
+## SEO & Social
+
+### Open Graph & Twitter Cards
+
+Automatic social preview support:
+
+1. **Custom Image**: Set `og_image` in front matter
+2. **Auto-Generated**: If no `og_image`, a dynamic preview is generated via [Tailgraph](https://og.tailgraph.com/)
+3. **Site Default**: Falls back to `og_image` in `_config.yml`
+
+OG images are automatically compressed during CI build (target: <500KB).
+
+### Sitemap & Robots
+
+- **Sitemap**: Auto-generated at `/sitemap.xml` via `jekyll-sitemap`
+- **Robots.txt**: Configured at `/robots.txt`, allows all crawlers
+- **Schema.org**: Structured data for better search engine understanding
+- **RSS Feed**: Available at `/feed.xml` (enable icon via `rss_icon: true` in config)
+
+---
+
+## Deployment & CI/CD
+
+Hosted on **GitHub Pages** with **GitHub Actions**.
+
+### Workflows
+
+| Workflow                       | Trigger                      | Action                              |
+| ------------------------------ | ---------------------------- | ----------------------------------- |
+| `deploy.yml`                   | Push to `master`, PR, manual | Build & deploy to `gh-pages`        |
+| `ga4-post-uv.yml`              | Called by other workflows    | Export GA4 page views               |
+| `daily-refresh-and-deploy.yml` | Daily UTC 00:00              | Refresh GA4 data, deploy if changed |
+
+### Build Pipeline
+
+1. Checkout repository
+2. Compress OG images (auto-creates optimized `-og.jpg` versions)
+3. Setup Ruby & install gems
+4. Build site (`bundle exec jekyll build`)
+5. Deploy `_site/` to `gh-pages` branch
+
+### Manual Deploy
+
+**Actions** → **deploy** → **Run workflow**
+
+---
+
+## Optional Features
+
+### Feature Toggles
+
+Configure in `_config.yml`:
+
+```yaml
+enable_google_analytics: true # GA4 tracking
+enable_math: true # MathJax
+enable_mermaid: true # Mermaid diagrams
+enable_pseudocode: true # Pseudocode blocks
+enable_darkmode: true # Dark/light toggle
+enable_medium_zoom: true # Image zoom
+enable_progressbar: true # Reading progress bar
+enable_navbar_social: true # Social icons in navbar
+enable_tooltips: false # Auto-generate tooltip links
+```
+
+### Additional Features
+
+| Feature           | Description                                                |
+| ----------------- | ---------------------------------------------------------- |
+| **Dark Mode**     | Toggle via navbar button, respects system preference       |
+| **Progress Bar**  | Reading progress indicator at top of page                  |
+| **Image Zoom**    | Click images to zoom (Medium-style)                        |
+| **Emoji Support** | GitHub-style emoji via `jemoji` (`:smile:` → 😄)           |
+| **Last Updated**  | Footer shows site's last build time (`last_updated: true`) |
+| **Navbar Social** | Social icons displayed in navigation bar                   |
+
+### GA4 Page View Tracking
+
+Display view counts on blog posts:
+
+1. Create Google Cloud service account with GA4 Data API access
+2. Add repository secrets:
+   - `GA4_SERVICE_ACCOUNT_KEY` — JSON key content
+   - `GA4_PROPERTY_ID` — Property ID (e.g., `123456789`)
+   - `GA4_START_DATE` (optional) — Start date for "all time"
+
+The workflow updates `_data/post_uv.json` daily.
+
+---
+
+## Data Files
+
+Configuration data in `_data/`:
+
+| File                | Purpose                                                |
+| ------------------- | ------------------------------------------------------ |
+| `cv.yml`            | CV content (education, experience, publications, etc.) |
+| `coauthors.yml`     | Auto-link co-authors in publications by last name      |
+| `projects.yml`      | Cards shown on the Projects page                       |
+| `post_uv.json`      | Page view counts (auto-generated by GA4 workflow)      |
+| `post_uv_meta.json` | Metadata for page view tracking                        |
+
+**Co-authors Example** (`coauthors.yml`):
+
+```yaml
+"Zhang":
+  - firstname: [Weinan, W.]
+    url: https://example.com
+```
+
+This auto-links "W. Zhang" or "Weinan Zhang" in publication author lists.
+
+**Projects Example** (`projects.yml`):
+
+```yaml
+- name: Project Name
+  repo: owner/repo-name
+  blurb: One or two factual sentences.
+  language: Python
+  stars:
+  forks:
+  tags: [topic-a, topic-b]
+```
+
+---
+
+## Credits & License
+
+- **Theme**: [al-folio](https://github.com/alshedivat/al-folio) (MIT License)
+- **Content**: © Xihuai Wang unless stated otherwise

@@ -1,0 +1,1267 @@
+/*******************************************************************************
+ * Styles for the base elements of the theme.
+ ******************************************************************************/
+
+@use "variables" as *;
+@use "mixins" as *;
+
+// Global Scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--global-divider-color);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--global-theme-color);
+}
+
+// Selection
+::selection {
+  background: var(--global-theme-color);
+  color: #fff;
+  text-shadow: none;
+}
+
+// Typography
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+em,
+div,
+li,
+span,
+strong {
+  color: var(--global-text-color);
+}
+
+hr {
+  border-top: 1px solid var(--global-divider-color);
+}
+
+table,
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: var(--global-text-color);
+  background-color: transparent;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid var(--global-divider-color);
+    border-color: var(--global-divider-color); // Ensure border color overrides bootstrap
+  }
+
+  thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid var(--global-divider-color);
+    border-color: var(--global-divider-color);
+  }
+
+  tbody + tbody {
+    border-top: 2px solid var(--global-divider-color);
+    border-color: var(--global-divider-color);
+  }
+
+  tbody tr {
+    transition: background-color 0.2s ease;
+    &:hover {
+      background-color: var(--global-code-bg-color);
+    }
+  }
+
+  td {
+    font-size: $font-size-base;
+  }
+}
+
+
+a,
+table.table a {
+  color: var(--global-theme-color);
+
+  &:hover {
+    color: var(--global-theme-color);
+    text-decoration: underline;
+  }
+
+  &:hover:after :not(.nav-item.dropdown) {
+    width: 100%;
+  }
+}
+
+// Global image reset — keep only responsive behavior. Decorative
+// border-radius + shadow moved to scoped post-content rules so that tiny
+// inline icons (wechat/zhihu/bilibili PNGs) don't inherit photo styling.
+figure,
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// Shadow helpers — replacements for the two MDB classes the site actually
+// used, so the MDB CDN bundle could be dropped.
+.z-depth-0 {
+  box-shadow: none;
+}
+.z-depth-1 {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+blockquote {
+  background: none;
+  border-left: 2px solid var(--global-theme-color);
+  margin: 1.5em 0;
+  padding: 0.75em 0 0.75em 1.5em;
+  font-family: "Fraunces", "Noto Serif SC", "Source Serif 4", Georgia, serif;
+  font-size: 1.125rem;
+  font-style: italic;
+  color: var(--global-text-color-light);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+// Math
+
+.equation {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+// Caption
+
+.caption {
+  font-size: $font-size-sm;
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+// Code
+
+pre.highlight {
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: var(--global-code-bg-color);
+  overflow-x: auto;
+}
+
+code {
+  font-family: monospace;
+  background-color: var(--global-code-bg-color);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: 1em;
+}
+
+// Card
+
+.card {
+  background-color: var(--global-card-bg-color);
+
+  img {
+    width: 100%;
+  }
+
+  .card-title {
+    color: var(--global-text-color);
+  }
+}
+
+.card.hoverable {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-radius: 6px;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+  }
+}
+
+// Citation
+
+.citation,
+.citation-number {
+  color: var(--global-theme-color);
+}
+
+// Profile
+
+.profile {
+  width: 100%;
+
+  // On mobile: center the profile and cap image size so portrait doesn't dominate
+  @media (max-width: 575.98px) {
+    max-width: 220px;
+    margin: 0 auto 1rem;
+    float: none !important;
+    display: block;
+  }
+
+  .address {
+    margin-bottom: 3px;
+    margin-top: 3px;
+    font-family: monospace;
+    font-size: $font-size-xs;
+    text-align: center;
+
+    p {
+      display: inline-block;
+      margin: 0;
+    }
+  }
+}
+
+.profile.float-right {
+  margin-left: 0.75rem;
+}
+
+.profile.float-left {
+  margin-right: 0.75rem;
+}
+
+// On mobile, neutralize the desktop left/right margin offsets so the centered
+// `margin: 0 auto` from the base `.profile` rule lands cleanly.
+@media (max-width: 575.98px) {
+  .profile.float-right,
+  .profile.float-left {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 576px) {
+  .profile {
+    width: 24%;
+    min-width: 150px;
+    max-width: 220px;
+
+    .address {
+      p {
+        display: block;
+      }
+    }
+  }
+}
+
+.post-description {
+  margin-top: 0.25rem;
+  margin-bottom: 1.25rem;
+  font-size: $font-size-md;
+  color: var(--global-text-color-light);
+  line-height: 1.5;
+  max-width: 60ch;
+
+  a {
+    color: inherit;
+
+    &:hover {
+      color: var(--global-theme-color);
+      text-decoration: none;
+    }
+  }
+
+  strong {
+    color: var(--global-theme-color);
+    font-weight: 600;
+  }
+}
+
+
+// Navbar customization
+
+.skip-to-content {
+  // Visually hidden until focused — use the standard sr-only clip pattern so
+  // the link's padding can never leak below the viewport's top edge.
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  z-index: 1101;
+
+  &:focus,
+  &:focus-visible {
+    width: auto;
+    height: auto;
+    padding: 0.65rem 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+.navbar {
+  box-shadow: none;
+  border-bottom: 1px solid var(--global-divider-color);
+  background-color: var(--global-bg-color);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.5rem 0;
+  min-height: 56px;
+  z-index: 1000;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: all 0.3s ease, background-color 0.25s ease;
+  }
+  
+  // Scrolled state - add shadow
+  &.scrolled {
+    box-shadow: var(--global-shadow-sm);
+  }
+}
+
+.navbar .dropdown-menu {
+  background-color: var(--global-bg-color);
+  border: 1px solid var(--global-divider-color);
+  border-radius: 8px;
+  box-shadow: var(--global-shadow-md);
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: dropdownFadeIn 0.2s ease;
+  }
+
+  a:not(.active) {
+    color: var(--global-text-color);
+  }
+
+  a:hover {
+    color: var(--global-hover-color);
+    background-color: var(--global-code-bg-color);
+  }
+
+  .dropdown-divider {
+    border-top: 1px solid var(--global-divider-color) !important;
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  color: var(--global-text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin: 0 0.25rem;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: all 0.15s ease;
+  }
+
+  &:hover {
+    color: var(--global-hover-color);
+    background-color: var(--global-code-bg-color);
+  }
+}
+
+.navbar.navbar-light {
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .navbar-brand {
+    color: var(--global-text-color);
+    font-weight: 600;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: color 0.2s ease;
+    }
+    
+    &:hover {
+      color: var(--global-theme-color);
+    }
+  }
+
+  .navbar-nav .nav-item .nav-link {
+    color: var(--global-text-color);
+    font-size: $font-size-sm;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    position: relative;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+
+    &:hover {
+      color: var(--global-theme-color);
+      background-color: var(--global-code-bg-color);
+    }
+  }
+
+  .navbar-nav .nav-item.active>.nav-link {
+    background-color: inherit;
+    font-weight: 600;
+    color: var(--global-theme-color);
+
+    // Active indicator
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background-color: var(--global-theme-color);
+      border-radius: 1px;
+    }
+
+    &:hover {
+      color: var(--global-theme-color);
+    }
+  }
+
+  .navbar-brand.social {
+    padding-bottom: 0;
+    padding-top: 0;
+    font-size: $font-size-lg;
+
+    a {
+      i::before {
+        color: var(--global-text-color);
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition: all 0.2s ease-in-out;
+        }
+      }
+
+      &:hover {
+        i::before {
+          color: var(--global-theme-color);
+        }
+      }
+    }
+  }
+}
+
+.navbar-toggler {
+  .icon-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--global-text-color);
+    border-radius: 1px;
+    margin-bottom: 4px;
+    transition: all 0.2s;
+  }
+
+  .top-bar {
+    transform: rotate(45deg);
+    transform-origin: 10% 10%;
+  }
+
+  .middle-bar {
+    opacity: 0;
+  }
+
+  .bottom-bar {
+    transform: rotate(-45deg);
+    transform-origin: 10% 90%;
+  }
+}
+
+.navbar-toggler.collapsed {
+  .top-bar {
+    transform: rotate(0);
+  }
+
+  .middle-bar {
+    opacity: 1;
+  }
+
+  .bottom-bar {
+    transform: rotate(0);
+  }
+}
+
+#light-toggle {
+  padding: 0.5rem;
+  border: 0;
+  background-color: transparent;
+  color: var(--global-text-color);
+  font-size: $font-size-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+
+  &:hover {
+    color: var(--global-theme-color);
+    background-color: var(--global-code-bg-color);
+    transform: rotate(15deg);
+  }
+  
+  &:active {
+    transform: scale(0.9);
+  }
+  
+  i {
+    @media (prefers-reduced-motion: no-preference) {
+      transition: transform 0.3s ease;
+    }
+  }
+  
+  // Sun/moon icon animation
+  .fa-sun, .fa-moon {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: themeIconPop 0.3s ease;
+    }
+  }
+}
+
+@keyframes themeIconPop {
+  0% {
+    transform: scale(0.5) rotate(-30deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 576px) {
+  #light-toggle {
+    padding: 0.5rem;
+    width: 36px;
+    height: 36px;
+    margin-left: 0.5rem;
+    justify-content: center;
+  }
+}
+
+// Mobile navbar styles
+@media (max-width: 575.98px) {
+  .navbar {
+    .container {
+      position: relative;
+    }
+    
+    // Social icons stay in top left
+    .navbar-social-icons {
+      position: relative;
+      z-index: 5;
+    }
+    
+    .navbar-toggler {
+      z-index: 10;
+    }
+    
+    .navbar-collapse {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--global-bg-color);
+      border: 1px solid var(--global-divider-color);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      box-shadow: var(--global-shadow-md);
+      padding: 0.75rem 1.25rem 1rem;
+      z-index: 1000;
+      
+      .navbar-nav {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.15rem;
+        
+        .nav-item {
+          text-align: right;
+          
+          .nav-link {
+            padding: 0.5rem 0.75rem;
+            display: inline-block;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            
+            &:hover {
+              background-color: var(--global-code-bg-color);
+            }
+          }
+        }
+        
+        // Active indicator - same width as text
+        .nav-item.active > .nav-link::after {
+          left: 0.75rem;
+          right: 0.75rem;
+          transform: none;
+          width: auto;
+          bottom: 0.15rem;
+        }
+        
+        // Theme toggle - right aligned, styled as icon button
+        .toggle-container {
+          margin-top: 0.5rem;
+          
+          #light-toggle {
+            margin: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background-color: var(--global-code-bg-color);
+            
+            // Remove rotation on hover for mobile
+            &:hover {
+              background-color: var(--global-divider-color);
+              transform: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Social (bottom)
+
+.social {
+  text-align: center;
+
+  .contact-icons {
+    font-size: $font-size-3xl;
+
+    a {
+      i::before {
+        color: var(--global-text-color);
+        transition-property: all 0.2s ease-in-out;
+      }
+
+      &:hover {
+        i::before {
+          color: var(--global-theme-color);
+        }
+      }
+    }
+  }
+
+  .contact-note {
+    font-size: $font-size-xs;
+  }
+}
+
+
+// Footer
+footer.fixed-bottom {
+  background-color: var(--global-footer-bg-color);
+  font-size: $font-size-xs;
+
+  .container {
+    color: var(--global-footer-text-color);
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  a {
+    color: var(--global-footer-link-color);
+
+    &:hover {
+      color: var(--global-theme-color);
+      text-decoration: none;
+    }
+  }
+}
+
+footer.sticky-bottom {
+  border-top: 1px solid var(--global-divider-color);
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-size: $font-size-xs;
+  text-align: center;
+}
+
+// CV
+
+.cv {
+  margin-bottom: 40px;
+
+  .card {
+    background-color: var(--global-card-bg-color);
+    border: 1px solid var(--global-divider-color);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+    .list-group-item {
+      background-color: inherit;
+      border-color: var(--global-divider-color);
+      color: var(--global-text-color); // Ensure text color is correct
+
+      .badge {
+        color: var(--global-theme-color) !important;
+        background-color: transparent !important;
+        border: none;
+      }
+    }
+  }
+}
+
+// Repositories
+
+@media (min-width: 768px) {
+  .repo {
+    max-width: 50%;
+  }
+}
+
+// Blog
+
+.header-bar {
+  border-bottom: 1px solid var(--global-divider-color);
+  text-align: center;
+  padding-top: 1.25rem;
+  padding-bottom: 1.75rem;
+
+  h1 {
+    color: var(--global-theme-color);
+    font-size: $font-size-3xl;
+  }
+}
+
+.tag-list {
+  border-bottom: 1px solid var(--global-divider-color);
+  text-align: center;
+  padding-top: 0.5rem;
+
+  ul {
+    justify-content: center;
+    display: flow-root;
+
+    p,
+    li {
+      list-style: none;
+      display: inline-block;
+      padding: 0.5rem 0.4rem;
+      color: var(--global-text-color-light);
+    }
+  }
+}
+
+.pagination {
+  .page-item {
+    .page-link {
+      color: var(--global-text-color);
+
+      &:hover {
+        color: $black-color;
+      }
+    }
+
+    &.active .page-link {
+      color: $white-color;
+      background-color: var(--global-theme-color);
+
+      &:hover {
+        background-color: var(--global-theme-color);
+      }
+    }
+  }
+}
+
+
+// Distill
+
+.distill {
+  a:hover {
+    border-bottom-color: var(--global-theme-color);
+    text-decoration: none;
+  }
+}
+
+
+// Rouge Color Customization
+figure.highlight {
+  margin: 0 0 1rem;
+}
+
+pre {
+  color: var(--global-theme-color);
+  background-color: var(--global-code-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  padding: 6px 12px;
+
+  pre,
+  code {
+    background-color: transparent;
+    border-radius: 0;
+    margin-bottom: 0;
+    padding: 0;
+  }
+}
+
+code {
+  color: var(--global-theme-color);
+  background-color: var(--global-code-bg-color);
+  border-radius: 3px;
+  padding: 3px 3px;
+}
+
+
+// Transitioning Themes - Optimized for performance
+// Only transition color-related properties instead of 'all' to avoid layout thrashing
+html.transition,
+html.transition *,
+html.transition *:before,
+html.transition *:after {
+  transition: color 200ms ease-out,
+              background-color 200ms ease-out,
+              border-color 200ms ease-out,
+              fill 200ms ease-out,
+              box-shadow 200ms ease-out !important;
+  transition-delay: 0 !important;
+}
+
+// Extra Markdown style (post Customization)
+.post {
+  .post-content {
+    blockquote {
+      border-left: 5px solid var(--global-theme-color);
+      padding: 8px;
+    }
+  }
+}
+
+/* Scroll progress indicator. Anchored inside the fixed navbar via absolute
+   positioning, so it never drifts relative to the navbar on iOS Safari. */
+.scroll-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;             /* overlap the navbar's 1px bottom rule */
+  height: 2px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.scroll-progress__bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  background-color: var(--accent, var(--global-theme-color));
+  transition: width 0.08s linear;
+  will-change: width;
+}
+
+pre {
+  padding: 8px 12px;
+  position: relative;
+
+  /* Copy code to clipboard button */
+  .copy {
+    background: var(--global-card-bg-color);
+    border-color: var(--global-bg-color);
+    border-radius: .3rem;
+    border-style: solid;
+    color: var(--global-text-color);
+    font-size: $font-size-base;
+    opacity: 0;
+    position: absolute;
+    right: .25rem;
+    top: .25rem;
+
+    &:active,
+    &:focus,
+    &:hover {
+      color: var(--global-hover-color);
+      opacity: 1;
+    }
+  }
+
+  /* Wrap toggle button */
+  .wrap-toggle {
+    background: var(--global-card-bg-color);
+    border-color: var(--global-bg-color);
+    border-radius: .3rem;
+    border-style: solid;
+    color: var(--global-text-color);
+    font-size: $font-size-base;
+    opacity: 0;
+    position: absolute;
+    right: 2.75rem;
+    top: .25rem;
+
+    &:active,
+    &:focus,
+    &:hover {
+      color: var(--global-hover-color);
+      opacity: 1;
+    }
+  }
+
+  &:active .copy,
+  &:focus .copy,
+  &:hover .copy,
+  &:active .wrap-toggle,
+  &:focus .wrap-toggle,
+  &:hover .wrap-toggle {
+    color: var(--global-hover-color);
+    opacity: 1;
+  }
+
+  /* Wrap functionality */
+  &.wrapped {
+    code,
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  }
+
+  &:not(.wrapped) {
+    code,
+    pre {
+      white-space: pre;
+      overflow-x: auto;
+    }
+  }
+}
+
+/*******************************************************************************
+ * News
+ ******************************************************************************/
+
+.news {
+  position: relative;
+
+  .news-table.news-scrollable {
+    max-height: clamp(220px, 32vh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+    mask-image: linear-gradient(to bottom, black 0, black calc(100% - 32px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0, black calc(100% - 32px), transparent 100%);
+  }
+
+  .news-table.news-scrollable table {
+    margin-bottom: 0;
+  }
+
+  th[scope="row"] {
+    white-space: nowrap;
+    font-size: $font-size-xs;
+  }
+
+  td {
+    font-size: $font-size-sm;
+    padding: 0.3rem 0 !important;
+    line-height: 1.5;
+
+    ul, ol {
+      margin-bottom: 0;
+    }
+  }
+
+  .news-table.news-scrollable::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .news-table.news-scrollable::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--global-theme-color) 0%, var(--global-hover-color) 100%);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: background 0.3s ease;
+    
+    &:hover {
+      background: linear-gradient(180deg, var(--global-hover-color) 0%, var(--global-theme-color) 100%);
+      background-clip: padding-box;
+    }
+  }
+
+  .news-table.news-scrollable::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    margin: 4px 0;
+  }
+
+  // Firefox scrollbar support
+  .news-table.news-scrollable {
+    scrollbar-width: auto;
+    scrollbar-color: var(--global-theme-color) rgba(0, 0, 0, 0.08);
+  }
+}
+
+/*******************************************************************************
+ * Enhanced Personal Homepage Styles
+ ******************************************************************************/
+
+// Navbar Social Icons - Modern minimal style
+.navbar-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;                // tiny breathing between icon circles
+  padding: 5px 0;
+  margin: 0;
+  min-height: 35px;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    text-decoration: none !important;
+
+    i, i::before {
+      font-size: 1.125rem;   // 18px — readable but not overpowering nav links
+      color: var(--global-text-color);
+      transition: all 0.2s ease;
+    }
+
+    &:hover {
+      background: var(--accent-wash);
+
+      i, i::before {
+        color: var(--accent);
+      }
+    }
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// Enhanced Profile Section
+.profile {
+  .address {
+    margin-top: 0.5rem;
+    font-size: $font-size-xs;
+    color: var(--global-text-color-light);
+    letter-spacing: 0.02em;
+    text-align: center;
+
+    p {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin: 0;
+
+      &::before {
+        content: "\f3c5"; // fa-map-marker-alt
+        font-family: 'Font Awesome 5 Free', 'FontAwesome';
+        font-weight: 900;
+        font-size: 0.85em;
+        color: var(--global-theme-color);
+        opacity: 0.85;
+      }
+    }
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  img {
+    border-radius: 12px;
+    border: 1px solid var(--global-divider-color);
+    box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.18);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--global-theme-color);
+      box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.22);
+    }
+  }
+}
+
+// Legacy About-page hero typography and section-header rules removed here —
+// the Xihuai Wang Refined Design System (_design_system.scss) owns these
+// surfaces now (signature-name hero, post > article > h2, .desc link style).
+
+// Section Cards
+.news, .publications {
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 1rem;
+  border: none;
+}
+
+// News Section - Clean List Style
+.news table {
+  font-size: $font-size-base;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+
+  tr {
+    transition: none;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid var(--global-divider-color);
+
+    &:hover {
+      transform: none !important;
+      box-shadow: none !important;
+      background-color: transparent !important;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  th[scope="row"] {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: var(--global-text-color);
+    padding: 1.2rem 1rem !important;
+    vertical-align: top;
+    min-width: 120px;
+    border: none;
+  }
+
+  td {
+    padding: 1.2rem 1rem !important;
+    line-height: 1.6;
+    vertical-align: top;
+    border: none;
+  }
+}
+
+/*******************************************************************************
+ * CV Page — see _sass/_design_system.scss section 13 for current styling.
+ * (Legacy `.cv { ... }` block removed; it conflicted with the dissolved-card
+ * design-system treatment and left a full-width green rule under each section
+ * heading plus a timeline dot marker that the new layout doesn't use.)
+ ******************************************************************************/
+
+// Legacy TOC sidebar rules lived here (`top: 70px` + `.nav-link` padding
+// animations). They are superseded by `_sass/_toc.scss` which now owns the
+// design-system flat list + moss rail. The old rule is removed because its
+// `top: 70px` was winning against the design-system `top: 5rem` due to
+// selector specificity.
+
+
+// Selected Papers on About Page - More Compact
+.post .publications {
+  padding-left: 0;
+  margin-left: 0;
+  text-align: left;
+}
+
+
+.about-selected-papers {
+  margin-bottom: 3rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+  &__intro {
+    margin-bottom: 1.5rem;
+
+    ol {
+      margin: 0.35rem 0 0 1.25rem;
+    }
+  }
+
+  .publications {
+    padding-left: 0;
+    margin-left: 0;
+    width: 100%;
+
+    ol,
+    li {
+      padding-left: 0;
+      margin-left: 0;
+      list-style: none;
+    }
+
+    ol.bibliography {
+      padding-left: 0;
+      margin-left: 0;
+    }
+  }
+}
+
+
+/*******************************************************************************
+ * Subtle scroll-reveal for news rows & paper items (respects reduced-motion)
+ ******************************************************************************/
+
+@media (prefers-reduced-motion: no-preference) {
+  .news table tr,
+  .post ol.bibliography > li {
+    animation: fadeInUp 0.5s ease both;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}

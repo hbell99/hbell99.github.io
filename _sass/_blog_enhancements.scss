@@ -1,0 +1,1235 @@
+/*******************************************************************************
+ * Enhancements for regular blog posts (non-distill).
+ ******************************************************************************/
+
+@use "variables" as *;
+@use "mixins" as *;
+
+/*******************************************************************************
+ * Enhanced Post Header Styles
+ ******************************************************************************/
+
+// Scoped to actual single blog posts (which contain .post-content). Keeps
+// Publications / CV / archive pages from inheriting a bottom hairline.
+.post:has(.post-content) .post-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--global-divider-color);
+
+  .post-title {
+    font-size: $font-size-2xl;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: var(--global-text-color);
+  }
+}
+
+// Blog post heading hierarchy
+.post-content {
+  // Base paragraph styling for readability
+  font-size: $font-size-base;
+  line-height: 1.8;
+  color: var(--global-text-color);
+  
+  p {
+    margin-bottom: 1.25rem;
+  }
+  
+  // Apply layout-specific paragraph alignment on larger viewports
+  @media (min-width: 768px) {
+    p {
+      text-align: left;
+      hyphens: none;
+    }
+  }
+  
+  // First paragraph after heading - no extra spacing
+  h2 + p, h3 + p, h4 + p {
+    margin-top: 0;
+  }
+  
+  // Ensure proper heading hierarchy and spacing
+  h2 {
+    font-size: $font-size-xl;  // 1.5rem = 24px
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    padding-bottom: 0;
+    border-bottom: none;        /* design kit: no decorative rule under h2 */
+    color: var(--global-text-color);
+  }
+
+  h3 {
+    font-size: $font-size-lg;  // 1.25rem = 20px
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    color: var(--global-text-color);
+  }
+
+  h4 {
+    font-size: $font-size-md;  // 1.125rem = 18px
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--global-text-color);
+  }
+  
+  h5, h6 {
+    font-size: $font-size-base;
+    font-weight: 600;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--global-text-color);
+  }
+  
+  // Strong emphasis
+  strong {
+    font-weight: 600;
+    color: var(--global-text-color);
+  }
+  
+  // Links in content
+  a {
+    color: var(--global-theme-color);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--global-theme-color);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: all 0.2s ease;
+    }
+    
+    &:hover {
+      border-bottom-style: solid;
+    }
+  }
+}
+
+.post-content {
+  // Make wide tables usable on small screens. Tables are wrapped in
+  // .table-responsive at build time (_plugins/table_wrapper.rb); the wrapper
+  // owns the vertical rhythm and the horizontal scroll.
+  .table-responsive {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    > table {
+      margin: 0;
+    }
+  }
+
+  // Enhanced table styling for better readability
+  table {
+    width: 100%;
+    margin: 1.5rem 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: $font-size-sm;
+    line-height: 1.6;
+    color: var(--global-text-color); // Ensure text color is correct
+    background-color: var(--global-bg-color);
+
+    // Keep Latin words intact inside cells: .toc-content sets
+    // `overflow-wrap: anywhere` for prose, which inherits into table cells
+    // and let the browser shatter words like "sequence" to squeeze columns.
+    // Content that no longer fits overflows into the .table-responsive
+    // horizontal scroll instead; CJK text still wraps normally.
+    th, td {
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+
+    thead {
+      background-color: var(--global-code-bg-color);
+      border-bottom: 1px solid var(--global-divider-color);
+      
+      th {
+        padding: 0.85rem 1rem;
+        font-weight: 600;
+        text-align: left;
+        white-space: nowrap;
+        color: var(--global-text-color);
+        font-size: $font-size-sm;
+        text-transform: none;
+        letter-spacing: 0.01em;
+        border-color: var(--global-divider-color);
+        
+        &[style*="text-align: center"] {
+          text-align: center !important;
+        }
+        &[style*="text-align: right"] {
+          text-align: right !important;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid var(--global-divider-color);
+
+        @media (prefers-reduced-motion: no-preference) {
+          transition: background-color 0.15s ease;
+        }
+        
+        &:hover {
+          background-color: var(--global-code-bg-color);
+        }
+        
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      td {
+        padding: 0.75rem 1rem;
+        vertical-align: top;
+        color: var(--global-text-color); // Ensure text color is correct
+        border-color: var(--global-divider-color);
+        
+        &[style*="text-align: center"] {
+          text-align: center !important;
+        }
+        &[style*="text-align: right"] {
+          text-align: right !important;
+        }
+        
+        // Math in tables should not overflow
+        .MathJax, mjx-container {
+          font-size: 0.9em !important;
+          overflow-x: auto;
+          max-width: 100%;
+        }
+      }
+    }
+
+    // Zebra striping (optional, subtle)
+    &.striped tbody tr:nth-child(even) {
+      background-color: var(--global-code-bg-color);
+    }
+
+    // Compact variant
+    &.compact {
+      font-size: $font-size-sm;
+      
+      th, td {
+        padding: 0.4rem 0.75rem;
+      }
+    }
+
+    // Code in tables
+    code {
+      font-size: 0.85em;
+      padding: 0.1rem 0.3rem;
+      white-space: nowrap;
+    }
+  }
+
+  // Improve readability of inline code without breaking Rouge blocks.
+  :not(pre) > code {
+    padding: 0.15rem 0.35rem;
+    font-size: 0.875em;
+    word-break: break-word;
+    background-color: var(--global-code-bg-color);
+    border-radius: 3px;
+  }
+
+  // Footnotes (default)
+  .footnotes {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--global-divider-color);
+    font-size: $font-size-sm;
+  }
+
+  .footnotes ol {
+    padding-left: 1.25rem;
+  }
+
+  a.footnote,
+  a.reversefootnote,
+  a.footnote-backlink {
+    text-decoration: none;
+  }
+}
+
+// Hover preview for Markdown footnotes.
+.footnote-preview {
+  position: fixed;
+  z-index: 1000;
+  max-width: min(520px, 92vw);
+  max-height: min(320px, 60vh);
+  overflow: auto;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--global-divider-color);
+  background: var(--global-bg-color);
+  box-shadow: none;
+  color: var(--global-text-color);
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Mermaid diagrams (client-side rendering).
+.mermaid {
+  margin: 1rem 0;
+  text-align: center;
+
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+// Collapsible blocks: {% details "Title" %} ... {% enddetails %} and native
+// <details markdown="1"> blocks in post bodies (parseable thanks to
+// _plugins/kramdown_phrasing_fix.rb) share the same look.
+.details-block,
+.post-content details {
+  margin: 1rem 0;
+  border: 1px solid var(--global-divider-color);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: var(--global-card-bg-color);
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.35rem 0;
+    list-style: none;
+    outline: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::before {
+    content: '▸';
+    display: inline-block;
+    margin-right: 0.5rem;
+    transform: translateY(-1px);
+  }
+
+  &[open] summary::before {
+    content: '▾';
+  }
+
+  .details-content {
+    padding: 0.25rem 0 0.75rem;
+  }
+}
+
+// References section for blog posts.
+.post-references {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--global-divider-color);
+
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: 0.75rem;
+  }
+
+  ol.bibliography {
+    padding-left: 1.25rem;
+  }
+
+  li.reference {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/*******************************************************************************
+ * Blog index language tabs
+ ******************************************************************************/
+
+.lang-switcher {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+
+  .nav {
+    display: inline-flex;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+  }
+
+  .nav-item {
+    border: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+
+    &::before,
+    &::after {
+      content: none !important;
+    }
+  }
+
+  .nav-link {
+    position: relative;
+    padding: 0.1rem 0 0.35rem;
+    margin: 0;
+    border: none !important;
+    border-bottom: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    color: var(--global-text-color) !important;
+    font-size: $font-size-sm;
+    opacity: 0.7;
+    transition: opacity 160ms ease, color 160ms ease;
+
+    &:hover {
+      opacity: 1;
+      color: var(--global-text-color) !important;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--global-theme-color);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    // Use ::before for the active indicator so we can hard-disable ::after
+    // in case a UI library injects an underline there.
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0.15rem;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      transform: none;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    &::after {
+      content: none !important;
+    }
+  }
+
+  .nav-link.active {
+    opacity: 1;
+
+    &::before {
+      background: var(--global-theme-color);
+    }
+  }
+}
+
+// Sidenotes (opt-in per post: `sidenotes: true`)
+.post.post--sidenotes {
+  @media (min-width: 992px) {
+    .footnotes {
+      display: none;
+    }
+
+    .sidenotes-col {
+      position: relative;
+    }
+
+    .sidenotes-rail {
+      position: relative;
+      min-height: 1px;
+    }
+
+    .sidenote {
+      position: absolute;
+      left: 0;
+      font-size: $font-size-sm;
+      line-height: 1.35;
+      color: var(--global-text-color-light);
+      padding-right: 0.75rem;
+      border-right: 2px solid var(--global-divider-color);
+      text-align: right;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .sidenote.is-active {
+      color: var(--global-text-color);
+      border-right-color: var(--global-theme-color);
+    }
+  }
+}
+
+// Post links (bilingual/external) - Enhanced styling
+.post-links {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 0;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    background-color: transparent;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 5px;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--global-text-color);
+    box-shadow: none;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: all 0.2s ease;
+    }
+
+    &:hover {
+      color: white;
+      background-color: var(--global-theme-color);
+      border-color: var(--global-theme-color);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      @media (prefers-reduced-motion: no-preference) {
+        transform: translateY(-1px);
+      }
+    }
+
+    img {
+      margin: 0 !important;
+    }
+  }
+}
+
+// Tighten spacing above post link buttons on post pages.
+.post {
+  .post-links {
+    margin-bottom: 1.75rem;
+  }
+}
+
+/*******************************************************************************
+ * Blog Page Time and Tag Button Styles
+ * (Mixin defined in _mixins.scss)
+ ******************************************************************************/
+
+// Global active filter style for blog
+a[data-filter-link].active-filter {
+  background-color: var(--global-theme-color) !important;
+  border-color: var(--global-theme-color) !important;
+  color: white !important;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--global-theme-color) !important;
+    border-color: var(--global-theme-color) !important;
+    color: white !important;
+    opacity: 0.9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+}
+
+/*******************************************************************************
+ * Enhanced Code Block Styling
+ ******************************************************************************/
+
+.post-content {
+  // Code blocks with syntax highlighting
+  .highlight {
+    position: relative;
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--global-shadow-sm);
+    border: 1px solid var(--global-divider-color);
+    background-color: var(--global-code-bg-color);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: box-shadow 0.2s ease;
+      
+      &:hover {
+        box-shadow: var(--global-shadow-md);
+      }
+    }
+
+    pre {
+      margin: 0;
+      padding: 1.25rem 1.5rem;
+      padding-top: 2.5rem; // Space for language label
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-size: $font-size-sm;
+      line-height: 1.7;
+      
+      // Custom scrollbar for code blocks
+      &::-webkit-scrollbar {
+        height: 6px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: transparent;
+        border-radius: 3px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: var(--global-divider-color);
+        border-radius: 3px;
+        
+        &:hover {
+          background: var(--global-text-color-light);
+        }
+      }
+      
+      code {
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+        border-radius: 0;
+        font-family: $font-family-monospace;
+      }
+    }
+
+    // Language label (added via CSS pseudo-element or JS)
+    &[data-lang]::before {
+      content: attr(data-lang);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 0.4rem 1rem;
+      font-size: $font-size-xs;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--global-text-color-light);
+      background: linear-gradient(to bottom, var(--global-code-bg-color), transparent);
+      border-bottom: 1px solid var(--global-divider-color);
+    }
+  }
+
+  // Standalone code blocks (no syntax highlighting)
+  pre:not(.highlight pre) {
+    margin: 1.25rem 0;
+    padding: 1rem 1.25rem;
+    background-color: var(--global-code-bg-color);
+    border-radius: 12px;
+    overflow-x: auto;
+    font-size: $font-size-sm;
+    line-height: 1.6;
+    border: 1px solid var(--global-divider-color);
+    box-shadow: var(--global-shadow-sm);
+  }
+
+  // Rouge highlighter wrapper
+  .highlighter-rouge {
+    margin: 1.25rem 0;
+
+    &.language-plaintext {
+      .highlight {
+        background-color: var(--global-code-bg-color);
+      }
+    }
+  }
+
+  // Line numbers (if enabled)
+  .lineno {
+    color: var(--global-text-color-light);
+    opacity: 0.5;
+    padding-right: 1rem;
+    user-select: none;
+    text-align: right;
+    min-width: 2rem;
+    display: inline-block;
+  }
+
+  // Override Rouge theme's red/pink backgrounds for errors and diffs
+  // These colors from external themes can be distracting
+  .highlight {
+    // Error tokens - remove red background
+    .err {
+      color: var(--global-text-color);
+      background-color: transparent !important;
+      border: none !important;
+    }
+    
+    // Generic.Deleted - soften the red background
+    .gd {
+      color: var(--global-text-color);
+      background-color: transparent !important;
+    }
+    
+    // Generic.Inserted - soften the green background  
+    .gi {
+      color: var(--global-text-color);
+      background-color: transparent !important;
+    }
+    
+    // Highlighted line - use theme-appropriate color
+    .hll {
+      background-color: var(--global-code-bg-color) !important;
+    }
+  }
+}
+
+/*******************************************************************************
+ * Global Rouge Theme Override (for all highlight blocks, not just post-content)
+ ******************************************************************************/
+
+.highlight {
+  .err {
+    color: inherit !important;
+    background-color: transparent !important;
+    border: none !important;
+  }
+  
+  .gd {
+    background-color: transparent !important;
+  }
+  
+  .gi {
+    background-color: transparent !important;
+  }
+  
+  .hll {
+    background-color: var(--global-code-bg-color) !important;
+  }
+}
+
+/*******************************************************************************
+ * Enhanced Math/LaTeX Styling
+ ******************************************************************************/
+
+.post-content {
+  // Display math blocks
+  .MathJax_Display,
+  mjx-container[display="true"],
+  .katex-display {
+    margin: 1.5rem 0;
+    padding: 0.5rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // Inline math
+  .MathJax,
+  mjx-container:not([display="true"]),
+  .katex:not(.katex-display .katex) {
+    font-size: 1em;
+  }
+
+  // Equation numbers (AMS style)
+  .MathJax_ref,
+  mjx-mrow.MJX-TEX {
+    font-size: 0.9em;
+  }
+
+  // Fix for math in tables
+  td, th {
+    .MathJax,
+    mjx-container,
+    .katex {
+      font-size: 0.92em !important;
+    }
+  }
+
+  // Fix for math in lists
+  li {
+    .MathJax_Display,
+    mjx-container[display="true"],
+    .katex-display {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  // Boxed equations (using \boxed{})
+  .MathJax .mbox,
+  mjx-mrow[style*="border"] {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+}
+
+/*******************************************************************************
+ * Figure and Image Enhancements
+ ******************************************************************************/
+
+.post-content {
+  figure {
+    margin: 2.5rem 0;
+    text-align: center;
+    background: transparent;
+    padding: 0;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--r-sm);
+      box-shadow: var(--global-shadow-sm);
+      cursor: zoom-in;
+      /* design: no scroll-linked parallax, no entrance choreography */
+    }
+
+    figcaption {
+      margin-top: 1rem;
+      font-size: $font-size-sm;
+      color: var(--global-text-color-light);
+      font-style: italic;
+      line-height: 1.6;
+      padding: 0.5rem 1.5rem;
+      background-color: var(--global-code-bg-color);
+      border-radius: 0 0 8px 8px;
+      display: inline-block;
+      max-width: 90%;
+
+      a {
+        color: var(--global-theme-color);
+        border-bottom: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Standalone images
+  p > img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 2.5rem auto;
+    border-radius: var(--r-sm);
+    box-shadow: var(--global-shadow-sm);
+    cursor: zoom-in;
+    /* design: flat paper; no hover scale */
+  }
+
+  // Image with caption using markdown
+  .img-caption {
+    text-align: center;
+    font-size: $font-size-sm;
+    color: var(--global-text-color-light);
+    font-style: italic;
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+  }
+
+  // Zoomable image indicator
+  img[data-zoomable] {
+    position: relative;
+    cursor: zoom-in;
+  }
+
+  // zoomable-image 🔍 overlay removed — design keeps decoration minimal;
+  // image-level cursor: zoom-in already telegraphs the affordance.
+}
+
+/*******************************************************************************
+ * Blockquote Enhancements
+ ******************************************************************************/
+
+.post-content {
+  blockquote {
+    margin: 2rem 0;
+    padding: 0.75rem 0 0.75rem 1.5rem;
+    border-left: 2px solid var(--global-theme-color);
+    background: none;                 /* design: flat paper, no fill */
+    border-radius: 0;
+    font-family: "Fraunces", "Noto Serif SC", "Source Serif 4", Georgia, serif;
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--global-text-color-light);
+
+    &::before { content: none; }      /* kill giant Georgia quote mark */
+
+    p {
+      margin: 0;
+      font-style: italic;
+      line-height: 1.7;
+
+      &:not(:last-child) { margin-bottom: 0.75rem; }
+    }
+
+    // Nested blockquotes — quieter rail
+    blockquote {
+      margin: 1rem 0;
+      border-left-color: var(--global-text-color-light);
+      padding: 0.5rem 0 0.5rem 1rem;
+    }
+
+    // Callout flavors — keep functional color but no background wash
+    &.note,   &.info    { border-left-color: #3498db; }
+    &.warning           { border-left-color: #f39c12; }
+    &.danger, &.error   { border-left-color: #e74c3c; }
+    &.success,&.tip     { border-left-color: #2ecc71; }
+  }
+}
+
+/*******************************************************************************
+ * List Enhancements
+ ******************************************************************************/
+
+.post-content {
+  ul, ol {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+
+    li {
+      margin-bottom: 0.35rem;
+      line-height: 1.7;
+
+      // Nested lists
+      ul, ol {
+        margin: 0.5rem 0;
+      }
+    }
+  }
+
+  // Task lists
+  ul.task-list {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+      padding-left: 1.5rem;
+      position: relative;
+
+      input[type="checkbox"] {
+        position: absolute;
+        left: 0;
+        top: 0.35rem;
+      }
+    }
+  }
+}
+
+/*******************************************************************************
+ * Additional UX Enhancements
+ ******************************************************************************/
+
+// Back to top button
+.back-to-top {
+  position: fixed;
+  bottom: 50px;
+  right: 30px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--global-theme-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  // Respect prefers-reduced-motion for animations
+  @media (prefers-reduced-motion: no-preference) {
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+
+    &.is-visible {
+      transform: translateY(0);
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+  }
+  
+  i {
+    font-size: 1.25rem;
+  }
+  
+  @media (max-width: 768px) {
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// Smooth scroll for anchor links - respect prefers-reduced-motion
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// Print-friendly styles
+@media print {
+  .toc-sidebar,
+  .toc-collapsed-toggle,
+  .back-to-top,
+  .post-links {
+    display: none !important;
+  }
+  
+  .post-content {
+    font-size: 12pt;
+    line-height: 1.5;
+    
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+    
+    img {
+      max-width: 100%;
+      page-break-inside: avoid;
+    }
+    
+    h2, h3, h4 {
+      page-break-after: avoid;
+    }
+    
+    pre, blockquote {
+      page-break-inside: avoid;
+    }
+  }
+}
+
+// Horizontal rule styling
+.post-content hr {
+  margin: 2.5rem 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--global-divider-color), transparent);
+}
+
+// Definition lists
+.post-content {
+  dl {
+    margin: 1.5rem 0;
+    
+    dt {
+      font-weight: 600;
+      color: var(--global-text-color);
+      margin-top: 1rem;
+      
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    
+    dd {
+      margin-left: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--global-text-color-light);
+    }
+  }
+}
+
+// Keyboard key styling
+.post-content kbd {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-family: $font-family-monospace;
+  font-size: 0.85em;
+  color: var(--global-text-color);
+  background-color: var(--global-code-bg-color);
+  border: 1px solid var(--global-divider-color);
+  border-radius: var(--r-xs);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+// Abbreviation styling
+.post-content abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+  border-bottom: none;
+}
+
+/*******************************************************************************
+ * Code Block Copy & Wrap Buttons
+ ******************************************************************************/
+
+pre {
+  position: relative;
+  
+  // Copy button
+  button.copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    font-size: $font-size-xs;
+    font-weight: 500;
+    color: var(--global-text-color-light);
+    background-color: var(--global-bg-color);
+    border: 1px solid var(--global-divider-color);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    opacity: 0;
+    z-index: 10;
+    box-shadow: var(--global-shadow-sm);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    }
+    
+    i {
+      font-size: 0.85em;
+    }
+    
+    &:hover {
+      background-color: var(--global-theme-color);
+      border-color: var(--global-theme-color);
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+  
+  // Wrap toggle button
+  button.wrap-toggle {
+    position: absolute;
+    top: 0.5rem;
+    right: 2.5rem;
+    padding: 0.4rem 0.6rem;
+    font-size: $font-size-xs;
+    color: var(--global-text-color-light);
+    background-color: var(--global-bg-color);
+    border: 1px solid var(--global-divider-color);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    opacity: 0;
+    z-index: 10;
+    box-shadow: var(--global-shadow-sm);
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+    
+    i {
+      font-size: 0.85em;
+    }
+    
+    &:hover {
+      background-color: var(--global-code-bg-color);
+      color: var(--global-theme-color);
+    }
+  }
+  
+  // Show buttons on hover
+  &:hover {
+    button.copy,
+    button.wrap-toggle {
+      opacity: 1;
+    }
+  }
+  
+  // Wrapped state
+  &.wrapped {
+    code {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+}
+
+/*******************************************************************************
+ * Enhanced Link Styling
+ ******************************************************************************/
+
+.post-content {
+  // External links indicator
+  a[href^="http"]:not([href*="hbell99.github.io"]):not(.no-external-icon)::after {
+    content: " ↗";
+    font-size: 0.75em;
+    opacity: 0.7;
+    vertical-align: super;
+  }
+  
+  // Anchor links for headings
+  h2, h3, h4, h5, h6 {
+    position: relative;
+    
+    .anchor-link {
+      position: absolute;
+      left: -1.5rem;
+      opacity: 0;
+      color: var(--global-text-color-light);
+      text-decoration: none;
+      font-weight: 400;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transition: opacity 0.2s ease;
+      }
+      
+      &:hover {
+        color: var(--global-theme-color);
+      }
+    }
+    
+    &:hover .anchor-link {
+      opacity: 1;
+    }
+  }
+}
+
+/*******************************************************************************
+ * Smooth Scroll Offset for Fixed Header
+ ******************************************************************************/
+
+html {
+  scroll-padding-top: 80px;
+}
+
+/*******************************************************************************
+ * Focus States for Accessibility
+ ******************************************************************************/
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--global-theme-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/*******************************************************************************
+ * Enhanced Inline Code
+ ******************************************************************************/
+
+.post-content :not(pre) > code {
+  padding: 0.2em 0.4em;
+  font-size: 0.875em;
+  font-family: $font-family-monospace;
+  background-color: var(--global-code-bg-color);
+  border-radius: 4px;
+  border: 1px solid var(--global-divider-color);
+  word-break: break-word;
+}

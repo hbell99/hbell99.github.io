@@ -1,0 +1,147 @@
+<header>
+  <a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <!-- Nav Bar -->
+  <nav id="navbar" aria-label="Primary"
+    class="navbar navbar-light navbar-expand-sm {% if site.navbar_fixed %}fixed-top{% else %}sticky-top{% endif %}">
+    <div class="container">
+      {%- comment -%} Kit (Home.jsx / kit.css) calls for the left side to always show
+        the social icon rail at every width. Icons are their own anchors, so the
+        wrapper must NOT be an `<a>` (invalid nested anchor tags get stripped by
+        the browser — which left the navbar empty in an earlier pass). {%- endcomment -%}
+      {%- if site.enable_navbar_social -%}
+      <div class="navbar-brand navbar-social-icons">
+        {% include social.html %}
+      </div>
+      {%- elsif page.permalink != '/' -%}
+      <a class="navbar-brand title font-weight-lighter" href="{{ site.baseurl }}/">
+        {%- if site.title == "blank" -%}
+        {%- if site.first_name -%}
+        <span class="font-weight-bold">{{- site.first_name -}}&nbsp;</span>
+        {%- endif -%}
+        {%- if site.middle_name -%}
+        {{- site.middle_name -}}&nbsp;
+        {%- endif -%}
+        {%- if site.last_name -%}
+        {{- site.last_name -}}
+        {%- endif -%}
+        {%- else -%}
+        {{- site.title -}}
+        {%- endif -%}
+      </a>
+      {%- endif -%}
+      <!-- Navbar Toggle -->
+      <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar top-bar"></span>
+        <span class="icon-bar middle-bar"></span>
+        <span class="icon-bar bottom-bar"></span>
+      </button>
+
+      <div class="collapse navbar-collapse text-right" id="navbarNav">
+        <ul class="navbar-nav ml-auto flex-nowrap">
+
+          {%- for page in site.pages -%}
+          {% if page.permalink == '/' %}
+          {% assign about_title = page.title %}
+          {% endif %}
+          {% endfor %}
+
+          <!-- About -->
+          <li class="nav-item {% if page.permalink == '/' %}active{% endif %}">
+            <a class="nav-link" href="{{ '/' | relative_url }}">{{ about_title }}
+              {%- if page.permalink == '/' -%}
+              <span class="sr-only">(current)</span>
+              {%- endif -%}
+            </a>
+          </li>
+          {% if site.blog_nav_title %}
+          <!-- Blog -->
+          <li class="nav-item {% if page.url contains 'blog' %}active{% endif %}">
+            <a class="nav-link" href="{{ '/blog/' | relative_url }}">{{ site.blog_nav_title }}
+              {%- if page.url contains 'blog' -%}
+              <span class="sr-only">(current)</span>
+              {%- endif -%}
+            </a>
+          </li>
+          {%- endif %}
+
+          <!-- CV -->
+          {% comment %}
+          Disabled PDF-CV nav entry; kept for reference. Liquid inside HTML
+          comments still executes, so this must stay a Liquid comment.
+          {% if site.cv_nav_title %}
+          <li class="nav-item {% if page.url contains 'blog' %}active{% endif %}">
+            <a class="nav-link" href="{{ site.cv_pdf | prepend: 'assets/pdf/' | relative_url }}" target="_blank"
+              rel="noopener noreferrer">{{ site.cv_nav_title }}
+              {%- if page.url contains 'blog' -%}
+              <span class="sr-only">(current)</span>
+              {%- endif -%}
+            </a>
+          </li>
+          {%- endif %}
+          {% endcomment %}          <!-- Other pages -->
+          {%- assign sorted_pages = site.pages | sort: "nav_order" -%}
+          {%- for p in sorted_pages -%}
+          {%- if p.nav and p.autogen == nil -%}
+          {%- if p.dropdown %}
+          <li class="nav-item dropdown {% if page.title == p.title %}active{% endif %}">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">{{ p.title }}
+              {%- if page.title == p.title -%}
+              <span class="sr-only">(current)</span>
+              {%- endif -%}
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              {%- for child in p.children -%}
+              {%- if child.title == 'divider' %}
+              <div class="dropdown-divider"></div>
+              {%- else %}
+              <a class="dropdown-item" href="{{ child.permalink | relative_url }}">{{ child.title }}</a>
+              {%- endif -%}
+              {% endfor %}
+            </div>
+          </li>
+          {%- else %}
+          <li class="nav-item {% if page.title == p.title %}active{% endif %}">
+            <a class="nav-link" href="{{ p.url | relative_url }}">{{ p.nav_title | default: p.title }}
+              {%- if page.title == p.title -%}
+              <span class="sr-only">(current)</span>
+              {%- endif -%}
+            </a>
+          </li>
+          {%- endif -%}
+          {%- endif -%}
+          {% endfor -%}
+          
+          {%- if site.enable_darkmode %}
+          <!-- Toggle theme mode -->
+          <li class="nav-item toggle-container">
+            <button id="light-toggle" class="nav-link theme-toggle" title="Change theme" aria-label="Toggle dark mode">
+              <span class="theme-toggle__icons" aria-hidden="true">
+                <svg class="theme-toggle__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/>
+                </svg>
+                <svg class="theme-toggle__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+              </span>
+            </button>
+          </li>
+          {%- endif %}
+        </ul>
+      </div>
+    </div>
+    {% if site.enable_progressbar %}
+    <!-- Scroll progress is anchored INSIDE the fixed navbar so it moves with
+         it rather than as a separate fixed element. iOS Safari's dynamic
+         address bar otherwise causes two fixed-position elements at different
+         offsets to drift relative to each other. -->
+    <div class="scroll-progress" aria-hidden="true">
+      <span class="scroll-progress__bar" id="scroll-progress-bar"></span>
+    </div>
+    {%- endif %}
+  </nav>
+</header>

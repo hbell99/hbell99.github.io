@@ -1,0 +1,13 @@
+---
+layout: default
+---
+<!-- page.html -->
+        <div class="post">
+          {% assign _page_title_html = page.display_title | default: page.title %}
+          {% include page_header.html eyebrow=page.eyebrow title_html=_page_title_html title_class='post-title' lead=page.lead description=page.description %}
+
+          <article>
+            {{ content }}
+          </article>
+
+        </div>

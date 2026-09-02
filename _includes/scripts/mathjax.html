@@ -1,0 +1,185 @@
+  {%- if site.enable_math -%}
+  <!-- FOUC prevention for math: hide post content until MathJax finishes.
+       Flag `<html class="math-loading">` set synchronously; removed after render. -->
+  <script>
+    (function () {
+      if (!document.querySelector || !document.body && !document.documentElement) return;
+      // Only hide when a post-content area contains raw $ or $$ delimiters.
+      // We can't query DOM here (head), so we always flag and let JS remove it on ready.
+      document.documentElement.classList.add('math-loading');
+      // Hard fallback: remove the flag after 2.5s regardless of MathJax state.
+      setTimeout(function () {
+        document.documentElement.classList.remove('math-loading');
+        document.documentElement.classList.add('math-ready');
+      }, 2500);
+    })();
+  </script>
+  <style>
+    html.math-loading .post-content {
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+    html.math-ready .post-content,
+    html:not(.math-loading) .post-content {
+      opacity: 1;
+      transition: opacity 160ms ease;
+    }
+    /* Inherit theme text color so dark mode renders math correctly */
+    .post-content mjx-container,
+    .post-content mjx-container mjx-math {
+      color: inherit;
+    }
+    /* Display math: allow horizontal scroll; fade hint appears only when content overflows */
+    .post-content mjx-container[display="true"] {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25rem 0.1rem;
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
+      scrollbar-width: thin;
+    }
+    .post-content mjx-container[display="true"].has-overflow {
+      mask-image: linear-gradient(to right, black 0, black calc(100% - 18px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 18px), transparent 100%);
+    }
+    /* Equation number alignment */
+    .post-content mjx-container[display="true"] mjx-labels {
+      color: var(--global-text-color-light);
+    }
+  </style>
+  <!-- MathJax 3.x with comprehensive configuration -->
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        tags: 'ams',
+        // Support all common math delimiters
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        processRefs: true,
+        // Common macros for convenience
+        macros: {
+          RR: '\\mathbb{R}',
+          NN: '\\mathbb{N}',
+          ZZ: '\\mathbb{Z}',
+          CC: '\\mathbb{C}',
+          EE: '\\mathbb{E}',
+          PP: '\\mathbb{P}',
+          bm: ['\\boldsymbol{#1}', 1],
+          argmax: '\\operatorname*{arg\\,max}',
+          argmin: '\\operatorname*{arg\\,min}',
+          sgn: '\\operatorname{sgn}',
+          KL: '\\mathrm{KL}',
+          Var: '\\operatorname{Var}',
+          Cov: '\\operatorname{Cov}',
+          tr: '\\operatorname{tr}',
+          diag: '\\operatorname{diag}'
+        },
+        // AMS packages
+        packages: {'[+]': ['ams', 'boldsymbol', 'newcommand']}
+      },
+      loader: {
+        load: ['[tex]/ams', '[tex]/boldsymbol', '[tex]/newcommand']
+      },
+      options: {
+        // Skip math rendering in these HTML elements
+        skipHtmlTags: [
+          'script', 'noscript', 'style', 'textarea', 'pre', 'code',
+          'annotation', 'annotation-xml', 'kbd', 'samp', 'var'
+        ],
+        // Fix issues with underscores being converted to <em> by HTML
+        processHtmlClass: 'mathjax-process',
+        ignoreHtmlClass: 'tex2jax_ignore|no-mathjax',
+        // Render math even with HTML entities
+        renderActions: {
+          findScript: [10, function (doc) {
+            // Pre-process to fix HTML entity issues in math
+            for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            }
+          }, '']
+        }
+      },
+      svg: {
+        fontCache: 'global',
+        scale: 1.0
+      },
+      chtml: {
+        scale: 1.0,
+        matchFontHeight: true
+      },
+      startup: {
+        ready: function () {
+          MathJax.startup.defaultReady();
+          MathJax.startup.promise.then(() => {
+            // Clear FOUC flag so post-content fades in
+            document.documentElement.classList.remove('math-loading');
+            document.documentElement.classList.add('math-ready');
+            // Detect display-math overflow once, then on resize (debounced)
+            const detectOverflow = () => {
+              try {
+                document.querySelectorAll('.post-content mjx-container[display="true"]').forEach(el => {
+                  if (el.scrollWidth > el.clientWidth + 1) {
+                    el.classList.add('has-overflow');
+                  } else {
+                    el.classList.remove('has-overflow');
+                  }
+                });
+              } catch (_) { /* ignore */ }
+            };
+            detectOverflow();
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+              clearTimeout(resizeTimer);
+              resizeTimer = setTimeout(detectOverflow, 150);
+            }, { passive: true });
+          });
+        }
+      }
+    };
+  </script>
+  <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@{{ site.mathjax.version }}/es5/tex-mml-chtml.js"></script>
+  
+  <!-- Pre-processing script to protect math from Markdown/HTML interference -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fix underscores in math that were converted to <em> by Markdown
+      function fixMathUnderscores() {
+        const mathContainers = document.querySelectorAll('.MathJax, .MathJax_Display, mjx-container');
+        // This runs before MathJax, so we need to fix raw content
+        const content = document.querySelector('.post-content, article');
+        if (!content) return;
+        
+        // Find math delimiters and restore any <em> or <strong> inside them
+        const html = content.innerHTML;
+        
+        // Pattern to find math blocks and restore underscore formatting
+        // This is a fallback; the main protection is in the Jekyll plugin
+      }
+      
+      // Fix HTML entities in display math blocks
+      function fixHtmlEntities() {
+        document.querySelectorAll('.language-plaintext.highlighter-rouge').forEach(el => {
+          // Check if this looks like an HTML figure that wasn't rendered
+          const text = el.textContent;
+          if (text.includes('<img') || text.includes('<figure') || text.includes('<figcaption')) {
+            // This is raw HTML that should be rendered - replace with actual HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = text;
+            el.replaceWith(...temp.childNodes);
+          }
+        });
+      }
+      
+      fixHtmlEntities();
+    });
+  </script>
+  {%- endif %}

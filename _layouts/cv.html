@@ -1,0 +1,34 @@
+---
+layout: default
+---
+<!-- _layouts/cv.html — TOC sidebar removed: design system does not spec TOC
+     for the CV page (only blog post has `.uk-post-toc`). -->
+        <div class="post">
+          {% capture _cv_title_suffix %}{% if page.cv_pdf %}<i class="fas fa-file-pdf"></i>{% endif %}{% endcapture %}
+          {% assign _cv_title_html = page.display_title | default: page.title %}
+          {% assign _cv_eyebrow = page.eyebrow | default: 'Curriculum Vitæ' %}
+          {% include page_header.html eyebrow=_cv_eyebrow title_html=_cv_title_html title_suffix=_cv_title_suffix lead=page.lead description=page.description %}
+
+          <article>
+            <div class="cv">
+              {% for entry in site.data.cv %}
+                <div class="card mt-3 p-3">
+                  <h3 class="card-title font-weight-medium">{{ entry.title }}</h3>
+                  <div>
+                  {% if entry.type == "list" %}
+                    {% include cv/list.html %}
+                  {% elsif entry.type == "map" %}
+                    {% include cv/map.html %}
+                  {% elsif entry.type == "nested_list" %}
+                    {% include cv/nested_list.html %}
+                  {% elsif entry.type == "time_table" %}
+                   {% include cv/time_table.html %}
+                  {% else %}
+                    {{ entry.contents }}
+                  {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </article>
+        </div>

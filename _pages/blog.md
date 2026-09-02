@@ -1,196 +1,454 @@
 ---
 layout: default
 permalink: /blog/
-title: blog
-nav: true
+title: Blog
+nav: false
 nav_order: 1
-pagination:
-  enabled: true
-  collection: posts
-  permalink: /page/:num/
-  per_page: 5
-  sort_field: date
-  sort_reverse: true
-  trail:
-    before: 1 # The number of links before the current page
-    after: 3 # The number of links after the current page
+disable_share_image: true
+twitter_card: summary
 ---
 
-<div class="post">
+<div class="post blog-index">
 
-{% assign blog_name_size = site.blog_name | size %}
-{% assign blog_description_size = site.blog_description | size %}
+  <header class="post-header">
+    <p class="eyebrow">The Blog</p>
+    <h1 class="post-title has-dropcap">Huayu&rsquo;s <span class="blog-title__dropcap">B</span>log</h1>
+    <p class="lead">Notes on reinforcement learning, AI for physics, and LLM post-training &mdash; written to clarify my own thinking, shared in case they help yours.</p>
+  </header>
 
-{% if blog_name_size > 0 or blog_description_size > 0 %}
+{% assign uv_enabled = site.data.post_uv_meta.generated_at %}
+{% assign uv_data_all = site.data.post_uv.all %}
+{% assign uv_data_d30 = site.data.post_uv.d30 %}
+{% assign uv_has_modes = uv_data_all.size | plus: 0 %}
 
-  <div class="header-bar">
-    <h1>{{ site.blog_name }}</h1>
-    <h2>{{ site.blog_description }}</h2>
-  </div>
-  {% endif %}
+{%- comment -%} Build dedup post list — when an EN post has a zh_url, skip the ZH version on the index.
+Pair zh back onto EN via candidate loop. {%- endcomment -%}
+{%- assign postlist = site.posts -%}
 
-{% if site.display_tags and site.display_tags.size > 0 or site.display_categories and site.display_categories.size > 0 %}
+{%- comment -%} Count posts + collect categories with counts {%- endcomment -%}
+{%- assign visible_count = 0 -%}
+{%- assign cat_slug_list = "|" -%}
+{%- assign cat_name_list = "|" -%}
+{%- assign tag_slug_list = "|" -%}
+{%- assign tag_name_list = "|" -%}
+{%- assign year_list_raw = "" -%}
+{%- for post in postlist -%}
+{%- assign post_lang = post.lang | default: site.lang | downcase | replace: '_', '-' -%}
+{%- if post_lang == 'zh-cn' or post_lang == 'cn' -%}{%- assign post_lang = 'zh' -%}{%- endif -%}
+{%- if post_lang == 'zh' and post.en_url -%}{%- continue -%}{%- endif -%}
+{%- assign zh_post = nil -%}
+{%- if post_lang == 'en' and post.zh_url -%}
+{%- for candidate in postlist -%}
+{%- assign candidate_lang = candidate.lang | default: site.lang | downcase | replace: '_', '-' -%}
+{%- if candidate_lang == 'zh-cn' or candidate_lang == 'cn' -%}{%- assign candidate_lang = 'zh' -%}{%- endif -%}
+{%- if candidate_lang == 'zh' and candidate.en_url == post.url -%}
+{%- assign zh_post = candidate -%}
+{%- break -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+{%- assign visible_count = visible_count | plus: 1 -%}
+{%- assign post_year = post.date | date: "%Y" -%}
+{%- assign year_list_raw = year_list_raw | append: post_year | append: "|" -%}
+{%- for category in post.categories -%}
+{%- assign cat_slug = category | slugify -%}
+{%- assign cat_slug_token = "|" | append: cat_slug | append: "|" -%}
+{%- unless cat_slug_list contains cat_slug_token -%}
+{%- if cat_name_list == "|" -%}
+{%- assign cat_slug_list = cat_slug_list | append: cat_slug | append: "|" -%}
+{%- assign cat_name_list = cat_name_list | append: category | append: "|" -%}
+{%- else -%}
+{%- assign cat_slug_list = cat_slug_list | append: cat_slug | append: "|" -%}
+{%- assign cat_name_list = cat_name_list | append: category | append: "|" -%}
+{%- endif -%}
+{%- endunless -%}
+{%- endfor -%}
+{%- if zh_post -%}
+{%- for category in zh_post.categories -%}
+{%- assign cat_slug = category | slugify -%}
+{%- assign cat_slug_token = "|" | append: cat_slug | append: "|" -%}
+{%- unless cat_slug_list contains cat_slug_token -%}
+{%- assign cat_slug_list = cat_slug_list | append: cat_slug | append: "|" -%}
+{%- assign cat_name_list = cat_name_list | append: category | append: "|" -%}
+{%- endunless -%}
+{%- endfor -%}
+{%- endif -%}
+{%- for tag in post.tags -%}
+{%- assign tag_slug = tag | slugify -%}
+{%- assign tag_slug_token = "|" | append: tag_slug | append: "|" -%}
+{%- unless tag_slug_list contains tag_slug_token -%}
+{%- assign tag_slug_list = tag_slug_list | append: tag_slug | append: "|" -%}
+{%- assign tag_name_list = tag_name_list | append: tag | append: "|" -%}
+{%- endunless -%}
+{%- endfor -%}
+{%- if zh_post -%}
+{%- for tag in zh_post.tags -%}
+{%- assign tag_slug = tag | slugify -%}
+{%- assign tag_slug_token = "|" | append: tag_slug | append: "|" -%}
+{%- unless tag_slug_list contains tag_slug_token -%}
+{%- assign tag_slug_list = tag_slug_list | append: tag_slug | append: "|" -%}
+{%- assign tag_name_list = tag_name_list | append: tag | append: "|" -%}
+{%- endunless -%}
+{%- endfor -%}
+{%- endif -%}
+{%- endfor -%}
+{%- assign cat_slugs = cat_slug_list | split: "|" -%}
+{%- assign cat_names = cat_name_list | split: "|" -%}
+{%- assign tag_slugs = tag_slug_list | split: "|" -%}
+{%- assign tag_names = tag_name_list | split: "|" -%}
+{%- assign years_list = year_list_raw | split: "|" | uniq -%}
 
-  <div class="tag-category-list">
-    <ul class="p-0 m-0">
-      {% for tag in site.display_tags %}
-        <li>
-          <i class="fa-solid fa-hashtag fa-sm"></i> <a href="{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}">{{ tag }}</a>
-        </li>
-        {% unless forloop.last %}
-          <p>&bull;</p>
-        {% endunless %}
-      {% endfor %}
-      {% if site.display_categories.size > 0 and site.display_tags.size > 0 %}
-        <p>&bull;</p>
-      {% endif %}
-      {% for category in site.display_categories %}
-        <li>
-          <i class="fa-solid fa-tag fa-sm"></i> <a href="{{ category | slugify | prepend: '/blog/category/' | relative_url }}">{{ category }}</a>
-        </li>
-        {% unless forloop.last %}
-          <p>&bull;</p>
-        {% endunless %}
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
+  <nav class="blog-controls" role="group" aria-label="Filter posts by category" markdown="0">
+    <button type="button" class="blog-pill is-active" data-filter-link data-filter-type="category" data-filter-value="">
+      All posts <span class="blog-pill__count">{{ visible_count }}</span>
+    </button>
+    {%- for i in (0..cat_slugs.size) -%}
+      {%- if i >= cat_slugs.size -%}{%- break -%}{%- endif -%}
+      {%- assign this_slug = cat_slugs[i] -%}
+      {%- assign this_name = cat_names[i] -%}
+      {%- if this_slug == "" -%}{%- continue -%}{%- endif -%}
+      {%- assign this_count = 0 -%}
+      {%- for post in postlist -%}
+        {%- assign post_lang = post.lang | default: site.lang | downcase | replace: '_', '-' -%}
+        {%- if post_lang == 'zh-cn' or post_lang == 'cn' -%}{%- assign post_lang = 'zh' -%}{%- endif -%}
+        {%- if post_lang == 'zh' and post.en_url -%}{%- continue -%}{%- endif -%}
+        {%- assign zh_post = nil -%}
+        {%- if post_lang == 'en' and post.zh_url -%}
+          {%- for candidate in postlist -%}
+            {%- assign candidate_lang = candidate.lang | default: site.lang | downcase | replace: '_', '-' -%}
+            {%- if candidate_lang == 'zh-cn' or candidate_lang == 'cn' -%}{%- assign candidate_lang = 'zh' -%}{%- endif -%}
+            {%- if candidate_lang == 'zh' and candidate.en_url == post.url -%}
+              {%- assign zh_post = candidate -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- assign matched_category = false -%}
+        {%- for c in post.categories -%}
+          {%- assign c_slug = c | slugify -%}
+          {%- if c_slug == this_slug -%}{%- assign matched_category = true -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if matched_category == false and zh_post -%}
+          {%- for c in zh_post.categories -%}
+            {%- assign c_slug = c | slugify -%}
+            {%- if c_slug == this_slug -%}{%- assign matched_category = true -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- if matched_category -%}{%- assign this_count = this_count | plus: 1 -%}{%- endif -%}
+      {%- endfor -%}
+      {%- assign display_name = this_name | replace: "-", " " | capitalize -%}
+      <button type="button" class="blog-pill" data-filter-link data-filter-type="category" data-filter-value="{{ this_slug }}">
+        {{ display_name }} <span class="blog-pill__count">{{ this_count }}</span>
+      </button>
+    {%- endfor -%}
+    {%- for i in (0..tag_slugs.size) -%}
+      {%- if i >= tag_slugs.size -%}{%- break -%}{%- endif -%}
+      {%- assign this_slug = tag_slugs[i] -%}
+      {%- assign this_name = tag_names[i] -%}
+      {%- if this_slug == "" -%}{%- continue -%}{%- endif -%}
+      {%- assign this_count = 0 -%}
+      {%- for post in postlist -%}
+        {%- assign post_lang = post.lang | default: site.lang | downcase | replace: '_', '-' -%}
+        {%- if post_lang == 'zh-cn' or post_lang == 'cn' -%}{%- assign post_lang = 'zh' -%}{%- endif -%}
+        {%- if post_lang == 'zh' and post.en_url -%}{%- continue -%}{%- endif -%}
+        {%- assign zh_post = nil -%}
+        {%- if post_lang == 'en' and post.zh_url -%}
+          {%- for candidate in postlist -%}
+            {%- assign candidate_lang = candidate.lang | default: site.lang | downcase | replace: '_', '-' -%}
+            {%- if candidate_lang == 'zh-cn' or candidate_lang == 'cn' -%}{%- assign candidate_lang = 'zh' -%}{%- endif -%}
+            {%- if candidate_lang == 'zh' and candidate.en_url == post.url -%}
+              {%- assign zh_post = candidate -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- assign matched_tag = false -%}
+        {%- for t in post.tags -%}
+          {%- assign t_slug = t | slugify -%}
+          {%- if t_slug == this_slug -%}{%- assign matched_tag = true -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        {%- if matched_tag == false and zh_post -%}
+          {%- for t in zh_post.tags -%}
+            {%- assign t_slug = t | slugify -%}
+            {%- if t_slug == this_slug -%}{%- assign matched_tag = true -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- if matched_tag -%}{%- assign this_count = this_count | plus: 1 -%}{%- endif -%}
+      {%- endfor -%}
+      {%- assign display_name = this_name | replace: "-", " " | capitalize -%}
+      <button type="button" class="blog-pill" data-filter-link data-filter-type="tag" data-filter-value="{{ this_slug }}">
+        {{ display_name }} <span class="blog-pill__count">{{ this_count }}</span>
+      </button>
+    {%- endfor -%}
 
-{% assign featured_posts = site.posts | where: "featured", "true" %}
-{% if featured_posts.size > 0 %}
-<br>
+    {% if uv_enabled and uv_has_modes > 0 %}
+    <span class="blog-controls__spacer"></span>
+    <span class="blog-views-toggle mono-meta">
+      Views:
+      <button type="button" class="uv-toggle" data-uv-mode="all" aria-pressed="false">All time</button>
+      /
+      <button type="button" class="uv-toggle" data-uv-mode="d30" aria-pressed="false">30 days</button>
+    </span>
+    {% endif %}
 
-<div class="container featured-posts">
-{% assign is_even = featured_posts.size | modulo: 2 %}
-<div class="row row-cols-{% if featured_posts.size <= 2 or is_even == 0 %}2{% else %}3{% endif %}">
-{% for post in featured_posts %}
-<div class="col mb-4">
-<a href="{{ post.url | relative_url }}">
-<div class="card hoverable">
-<div class="row g-0">
-<div class="col-md-12">
-<div class="card-body">
-<div class="float-right">
-<i class="fa-solid fa-thumbtack fa-xs"></i>
-</div>
-<h3 class="card-title text-lowercase">{{ post.title }}</h3>
-<p class="card-text">{{ post.description }}</p>
+  </nav>
 
-                    {% if post.external_source == blank %}
-                      {% assign read_time = post.content | number_of_words | divided_by: 180 | plus: 1 %}
-                    {% else %}
-                      {% assign read_time = post.feed_content | strip_html | number_of_words | divided_by: 180 | plus: 1 %}
-                    {% endif %}
-                    {% assign year = post.date | date: "%Y" %}
+{%- for year in years_list -%}
+{%- if year == "" -%}{%- continue -%}{%- endif -%}
+{%- assign count_in_year = 0 -%}
+{%- for post in postlist -%}
+{%- assign post_lang = post.lang | default: site.lang | downcase | replace: '_', '-' -%}
+{%- if post_lang == 'zh-cn' or post_lang == 'cn' -%}{%- assign post_lang = 'zh' -%}{%- endif -%}
+{%- if post_lang == 'zh' and post.en_url -%}{%- continue -%}{%- endif -%}
+{%- assign post_year = post.date | date: "%Y" -%}
+{%- if post_year == year -%}{%- assign count_in_year = count_in_year | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
 
-                    <p class="post-meta">
-                      {{ read_time }} min read &nbsp; &middot; &nbsp;
-                      <a href="{{ year | prepend: '/blog/' | relative_url }}">
-                        <i class="fa-solid fa-calendar fa-sm"></i> {{ year }} </a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </a>
+  <section class="blog-year-group" data-year-group="{{ year }}">
+    <h2 class="blog-year-head">
+      <span class="blog-year-num">{{ year }}</span>
+      <span class="blog-year-rule" aria-hidden="true"></span>
+      <span class="blog-year-count">{{ count_in_year }} {% if count_in_year == 1 %}post{% else %}posts{% endif %}</span>
+    </h2>
+
+    <ol class="post-rows">
+      {%- for post in postlist -%}
+        {%- assign post_lang = post.lang | default: site.lang | downcase | replace: '_', '-' -%}
+        {%- if post_lang == 'zh-cn' or post_lang == 'cn' -%}{%- assign post_lang = 'zh' -%}{%- endif -%}
+        {%- if post_lang == 'zh' and post.en_url -%}{%- continue -%}{%- endif -%}
+        {%- assign post_year = post.date | date: "%Y" -%}
+        {%- unless post_year == year -%}{%- continue -%}{%- endunless -%}
+
+        {%- assign post_categories_slug = "" -%}
+        {%- assign post_category_tokens = "|" -%}
+        {%- for category in post.categories -%}
+          {%- assign cs = category | slugify -%}
+          {%- assign cs_token = "|" | append: cs | append: "|" -%}
+          {%- unless post_category_tokens contains cs_token -%}
+            {%- assign post_category_tokens = post_category_tokens | append: cs | append: "|" -%}
+            {%- if post_categories_slug == "" -%}
+              {%- assign post_categories_slug = cs -%}
+            {%- else -%}
+              {%- assign post_categories_slug = post_categories_slug | append: " " | append: cs -%}
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
+        {%- assign post_tags_slug = "" -%}
+        {%- assign post_tag_tokens = "|" -%}
+        {%- for tag in post.tags -%}
+          {%- assign ts = tag | slugify -%}
+          {%- assign ts_token = "|" | append: ts | append: "|" -%}
+          {%- unless post_tag_tokens contains ts_token -%}
+            {%- assign post_tag_tokens = post_tag_tokens | append: ts | append: "|" -%}
+            {%- if post_tags_slug == "" -%}
+              {%- assign post_tags_slug = ts -%}
+            {%- else -%}
+              {%- assign post_tags_slug = post_tags_slug | append: " " | append: ts -%}
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
+
+        {%- assign zh_post = nil -%}
+        {%- if post_lang == 'en' and post.zh_url -%}
+          {%- for candidate in postlist -%}
+            {%- assign candidate_lang = candidate.lang | default: site.lang | downcase | replace: '_', '-' -%}
+            {%- if candidate_lang == 'zh-cn' or candidate_lang == 'cn' -%}{%- assign candidate_lang = 'zh' -%}{%- endif -%}
+            {%- if candidate_lang == 'zh' and candidate.en_url == post.url -%}
+              {%- assign zh_post = candidate -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+
+        {%- comment -%} Compute read_time for each language — word count differs between
+          English and the ZH translation, so reading-time estimates differ too. Views
+          (post_uv) are also keyed per URL, so EN and ZH have distinct view counts. {%- endcomment -%}
+        {%- if post.external_source == blank -%}
+          {%- if post_lang == 'zh' -%}
+            {%- assign read_units_en = post.content | strip_html | number_of_words: 'cjk' -%}
+          {%- else -%}
+            {%- assign read_units_en = post.content | strip_html | number_of_words -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- if post_lang == 'zh' -%}
+            {%- assign read_units_en = post.feed_content | strip_html | number_of_words: 'cjk' -%}
+          {%- else -%}
+            {%- assign read_units_en = post.feed_content | strip_html | number_of_words -%}
+          {%- endif -%}
+        {%- endif -%}
+        {%- assign read_time_en = read_units_en | plus: 179 | divided_by: 180 -%}
+        {%- if read_time_en < 1 -%}{%- assign read_time_en = 1 -%}{%- endif -%}
+        {%- if zh_post -%}
+          {%- for category in zh_post.categories -%}
+            {%- assign cs = category | slugify -%}
+            {%- assign cs_token = "|" | append: cs | append: "|" -%}
+            {%- unless post_category_tokens contains cs_token -%}
+              {%- assign post_category_tokens = post_category_tokens | append: cs | append: "|" -%}
+              {%- if post_categories_slug == "" -%}
+                {%- assign post_categories_slug = cs -%}
+              {%- else -%}
+                {%- assign post_categories_slug = post_categories_slug | append: " " | append: cs -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
+          {%- for tag in zh_post.tags -%}
+            {%- assign ts = tag | slugify -%}
+            {%- assign ts_token = "|" | append: ts | append: "|" -%}
+            {%- unless post_tag_tokens contains ts_token -%}
+              {%- assign post_tag_tokens = post_tag_tokens | append: ts | append: "|" -%}
+              {%- if post_tags_slug == "" -%}
+                {%- assign post_tags_slug = ts -%}
+              {%- else -%}
+                {%- assign post_tags_slug = post_tags_slug | append: " " | append: ts -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
+          {%- if zh_post.external_source == blank -%}
+            {%- assign read_units_zh = zh_post.content | strip_html | number_of_words: 'cjk' -%}
+          {%- else -%}
+            {%- assign read_units_zh = zh_post.feed_content | strip_html | number_of_words: 'cjk' -%}
+          {%- endif -%}
+          {%- assign read_time_zh = read_units_zh | plus: 179 | divided_by: 180 -%}
+          {%- if read_time_zh < 1 -%}{%- assign read_time_zh = 1 -%}{%- endif -%}
+        {%- endif -%}
+        {%- if post.redirect == blank -%}
+          {%- assign post_href = post.url | relative_url -%}
+          {%- assign post_target = '' -%}
+          {%- assign post_is_external = false -%}
+        {%- elsif post.redirect contains '://' -%}
+          {%- assign post_href = post.redirect -%}
+          {%- assign post_target = ' target="_blank" rel="noopener"' -%}
+          {%- assign post_is_external = true -%}
+        {%- else -%}
+          {%- assign post_href = post.redirect | relative_url -%}
+          {%- assign post_target = '' -%}
+          {%- assign post_is_external = false -%}
+        {%- endif -%}
+        {%- if zh_post -%}
+          {%- if zh_post.redirect == blank -%}
+            {%- assign zh_href = zh_post.url | relative_url -%}
+            {%- assign zh_target = '' -%}
+            {%- assign zh_is_external = false -%}
+          {%- elsif zh_post.redirect contains '://' -%}
+            {%- assign zh_href = zh_post.redirect -%}
+            {%- assign zh_target = ' target="_blank" rel="noopener"' -%}
+            {%- assign zh_is_external = true -%}
+          {%- else -%}
+            {%- assign zh_href = zh_post.redirect | relative_url -%}
+            {%- assign zh_target = '' -%}
+            {%- assign zh_is_external = false -%}
+          {%- endif -%}
+        {%- endif -%}
+
+      <li class="post-row blog-post-list-item" data-year="{{ post_year }}" data-categories="{{ post_categories_slug }}" data-tags="{{ post_tags_slug }}">
+        <time
+          class="post-row__date mono-meta"
+          datetime="{{ post.date | date_to_xmlschema }}"
+          data-date-en="{{ post.date | date: '%b %-d, %Y' }}"
+          data-date-zh="{{ post.date | date: '%Y年%-m月%-d日' }}"
+        >
+          {%- if post_lang == 'zh' and zh_post == nil -%}
+            {{ post.date | date: "%Y年%-m月%-d日" }}
+          {%- else -%}
+            {{ post.date | date: "%b %-d, %Y" }}
+          {%- endif -%}
+        </time>
+        <div class="post-row__body">
+          {%- if zh_post -%}
+          {%- assign pair_id = post.id | slugify -%}
+          <div class="post-row__langbar" role="tablist" aria-label="Language">
+            <button type="button" class="post-row__langtab is-active" data-lang-pair="{{ pair_id }}" data-lang-target="en" role="tab" id="langtab-{{ pair_id }}-en" aria-controls="langpane-{{ pair_id }}-en" aria-selected="true">EN</button>
+            <button type="button" class="post-row__langtab" data-lang-pair="{{ pair_id }}" data-lang-target="zh" role="tab" id="langtab-{{ pair_id }}-zh" aria-controls="langpane-{{ pair_id }}-zh" aria-selected="false">中</button>
+          </div>
+
+          <div class="post-row__lang-pane is-active" data-lang-pair="{{ pair_id }}" data-lang="en" role="tabpanel" id="langpane-{{ pair_id }}-en" aria-labelledby="langtab-{{ pair_id }}-en">
+            <h3 class="post-row__title">
+              <a href="{{ post_href }}"{{ post_target }}>{{ post.title }}{%- if post_is_external -%} <span class="post-row__external" aria-hidden="true">↗</span>{%- endif -%}</a>
+            </h3>
+            {%- if post.description -%}
+            <p class="post-row__desc">{{ post.description }}</p>
+            {%- endif -%}
+            <p class="post-row__meta mono-meta">
+              <span class="post-row__read">{{ read_time_en }} min read</span>
+              {%- for category in post.categories -%}
+              <span class="post-row__sep" aria-hidden="true">·</span>
+              <a class="post-row__cat" href="{{ '/blog/' | relative_url }}?category={{ category | slugify }}" data-filter-link data-filter-type="category" data-filter-value="{{ category | slugify }}">{{ category | replace: "-", " " | capitalize }}</a>
+              {%- endfor -%}
+              {%- for tag in post.tags -%}
+              <span class="post-row__sep" aria-hidden="true">·</span>
+              <a class="post-row__cat" href="{{ '/blog/' | relative_url }}?tag={{ tag | slugify }}" data-filter-link data-filter-type="tag" data-filter-value="{{ tag | slugify }}">{{ tag }}</a>
+              {%- endfor -%}
+              {%- if uv_enabled and uv_has_modes > 0 -%}
+              {%- include post_uv.html url=post.url -%}
+              <span class="post-row__sep" aria-hidden="true">·</span>
+              <span class="post-row__views post-uv" data-uv-all="{{ uv_all }}" data-uv-d30="{{ uv_d30 }}">{{ uv_all }} views</span>
+              {%- endif -%}
+            </p>
+          </div>
+
+          <div class="post-row__lang-pane" data-lang-pair="{{ pair_id }}" data-lang="zh" role="tabpanel" id="langpane-{{ pair_id }}-zh" aria-labelledby="langtab-{{ pair_id }}-zh" hidden>
+            <h3 class="post-row__title">
+              <a href="{{ zh_href }}"{{ zh_target }}>{{ zh_post.title }}{%- if zh_is_external -%} <span class="post-row__external" aria-hidden="true">↗</span>{%- endif -%}</a>
+            </h3>
+            {%- if zh_post.description -%}
+            <p class="post-row__desc">{{ zh_post.description }}</p>
+            {%- endif -%}
+            <p class="post-row__meta mono-meta">
+              <span class="post-row__read">{{ read_time_zh }} 分钟阅读</span>
+              {%- for category in zh_post.categories -%}
+              <span class="post-row__sep" aria-hidden="true">·</span>
+              <a class="post-row__cat" href="{{ '/blog/' | relative_url }}?category={{ category | slugify }}&lang=zh" data-filter-link data-filter-type="category" data-filter-value="{{ category | slugify }}">{{ category | replace: "-", " " | capitalize }}</a>
+              {%- endfor -%}
+              {%- for tag in zh_post.tags -%}
+              <span class="post-row__sep" aria-hidden="true">·</span>
+              <a class="post-row__cat" href="{{ '/blog/' | relative_url }}?tag={{ tag | slugify }}&lang=zh" data-filter-link data-filter-type="tag" data-filter-value="{{ tag | slugify }}">{{ tag }}</a>
+              {%- endfor -%}
+              {%- if uv_enabled and uv_has_modes > 0 -%}
+              {%- include post_uv.html url=zh_post.url -%}
+              <span class="post-row__sep" aria-hidden="true">·</span>
+              <span class="post-row__views post-uv" data-uv-all="{{ uv_all }}" data-uv-d30="{{ uv_d30 }}" data-uv-label="阅读">{{ uv_all }} 阅读</span>
+              {%- endif -%}
+            </p>
+          </div>
+
+          {%- else -%}
+          <h3 class="post-row__title">
+            <a href="{{ post_href }}"{{ post_target }}>{{ post.title }}{%- if post_is_external -%} <span class="post-row__external" aria-hidden="true">↗</span>{%- endif -%}</a>
+          </h3>
+          {%- if post.description -%}
+          <p class="post-row__desc">{{ post.description }}</p>
+          {%- endif -%}
+          {%- assign _lbl_read = "min read" -%}
+          {%- assign _lbl_views = "views" -%}
+          {%- if post_lang == 'zh' -%}
+            {%- assign _lbl_read = "分钟阅读" -%}
+            {%- assign _lbl_views = "阅读" -%}
+          {%- endif -%}
+          <p class="post-row__meta mono-meta">
+            <span class="post-row__read">{{ read_time_en }} {{ _lbl_read }}</span>
+            {%- for category in post.categories -%}
+            <span class="post-row__sep" aria-hidden="true">·</span>
+            <a class="post-row__cat" href="{{ '/blog/' | relative_url }}?category={{ category | slugify }}{% if post_lang == 'zh' %}&lang=zh{% endif %}" data-filter-link data-filter-type="category" data-filter-value="{{ category | slugify }}">{{ category | replace: "-", " " | capitalize }}</a>
+            {%- endfor -%}
+            {%- for tag in post.tags -%}
+            <span class="post-row__sep" aria-hidden="true">·</span>
+            <a class="post-row__cat" href="{{ '/blog/' | relative_url }}?tag={{ tag | slugify }}{% if post_lang == 'zh' %}&lang=zh{% endif %}" data-filter-link data-filter-type="tag" data-filter-value="{{ tag | slugify }}">{{ tag }}</a>
+            {%- endfor -%}
+            {%- if uv_enabled and uv_has_modes > 0 -%}
+            {%- include post_uv.html url=post.url -%}
+            <span class="post-row__sep" aria-hidden="true">·</span>
+            <span class="post-row__views post-uv" data-uv-all="{{ uv_all }}" data-uv-d30="{{ uv_d30 }}">{{ uv_all }} {{ _lbl_views }}</span>
+            {%- endif -%}
+          </p>
+          {%- endif -%}
         </div>
-      {% endfor %}
-      </div>
-    </div>
-    <hr>
+      </li>
+      {%- endfor -%}
+    </ol>
 
-{% endif %}
-
-  <ul class="post-list">
-
-    {% if page.pagination.enabled %}
-      {% assign postlist = paginator.posts %}
-    {% else %}
-      {% assign postlist = site.posts %}
-    {% endif %}
-
-    {% for post in postlist %}
-
-    {% if post.external_source == blank %}
-      {% assign read_time = post.content | number_of_words | divided_by: 180 | plus: 1 %}
-    {% else %}
-      {% assign read_time = post.feed_content | strip_html | number_of_words | divided_by: 180 | plus: 1 %}
-    {% endif %}
-    {% assign year = post.date | date: "%Y" %}
-    {% assign tags = post.tags | join: "" %}
-    {% assign categories = post.categories | join: "" %}
-
-    <li>
-
-{% if post.thumbnail %}
-
-<div class="row">
-          <div class="col-sm-9">
-{% endif %}
-        <h3>
-        {% if post.redirect == blank %}
-          <a class="post-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        {% elsif post.redirect contains '://' %}
-          <a class="post-title" href="{{ post.redirect }}" target="_blank">{{ post.title }}</a>
-          <svg width="2rem" height="2rem" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17 13.5v6H5v-12h6m3-3h6v6m0-6-9 9" class="icon_svg-stroke" stroke="#999" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        {% else %}
-          <a class="post-title" href="{{ post.redirect | relative_url }}">{{ post.title }}</a>
-        {% endif %}
-      </h3>
-      <p>{{ post.description }}</p>
-      <p class="post-meta">
-        {{ read_time }} min read &nbsp; &middot; &nbsp;
-        {{ post.date | date: '%B %d, %Y' }}
-        {% if post.external_source %}
-        &nbsp; &middot; &nbsp; {{ post.external_source }}
-        {% endif %}
-      </p>
-      <p class="post-tags">
-        <a href="{{ year | prepend: '/blog/' | relative_url }}">
-          <i class="fa-solid fa-calendar fa-sm"></i> {{ year }} </a>
-
-          {% if tags != "" %}
-          &nbsp; &middot; &nbsp;
-            {% for tag in post.tags %}
-            <a href="{{ tag | slugify | prepend: '/blog/tag/' | relative_url }}">
-              <i class="fa-solid fa-hashtag fa-sm"></i> {{ tag }}</a>
-              {% unless forloop.last %}
-                &nbsp;
-              {% endunless %}
-              {% endfor %}
-          {% endif %}
-
-          {% if categories != "" %}
-          &nbsp; &middot; &nbsp;
-            {% for category in post.categories %}
-            <a href="{{ category | slugify | prepend: '/blog/category/' | relative_url }}">
-              <i class="fa-solid fa-tag fa-sm"></i> {{ category }}</a>
-              {% unless forloop.last %}
-                &nbsp;
-              {% endunless %}
-              {% endfor %}
-          {% endif %}
-    </p>
-
-{% if post.thumbnail %}
+  </section>
+  {%- endfor -%}
 
 </div>
 
-  <div class="col-sm-3">
-    <img class="card-img" src="{{ post.thumbnail | relative_url }}" style="object-fit: cover; height: 90%" alt="image">
-  </div>
-</div>
-{% endif %}
-    </li>
-
-    {% endfor %}
-
-  </ul>
-
-{% if page.pagination.enabled %}
-{% include pagination.liquid %}
-{% endif %}
-
-</div>
+<script defer src="{{ '/assets/js/blog_filter.js' | relative_url }}"></script>

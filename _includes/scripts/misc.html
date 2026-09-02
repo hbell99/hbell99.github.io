@@ -1,0 +1,16 @@
+{%- if site.enable_medium_zoom %}
+  <!-- Medium Zoom JS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@{{ site.medium_zoom.version }}/dist/medium-zoom.min.js" integrity="{{ site.medium_zoom.integrity }}" crossorigin="anonymous"></script>
+  <script defer src="{{ '/assets/js/zoom.js' | relative_url }}"></script>
+{%- endif -%}
+
+  <!-- Load Common JS -->
+  <script defer src="{{ '/assets/js/common.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/js/blog_enhancements.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/sidenotes.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/footnote_preview.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/copy_code.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/toc.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/venue_filter.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/bibtex_copy.js' | relative_url }}" type="text/javascript"></script>
+  <script defer src="{{ '/assets/js/post_cite.js' | relative_url }}" type="text/javascript"></script>

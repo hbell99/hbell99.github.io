@@ -1,0 +1,45 @@
+{% if site.enable_progressbar %}
+
+<!-- Scroll progress indicator. The bar lives inside the fixed navbar so iOS
+     Safari cannot drift it relative to the navbar during address-bar reflow. -->
+<script type="text/javascript">
+  (function () {
+    var bar = document.getElementById("scroll-progress-bar");
+    if (!bar) return;
+
+    function update() {
+      var doc = document.documentElement;
+      var distance = Math.max(
+        (doc.scrollHeight || document.body.scrollHeight) - window.innerHeight,
+        0
+      );
+      if (distance <= 0) {
+        bar.style.width = "0%";
+        return;
+      }
+      var pos = window.scrollY || window.pageYOffset || 0;
+      var pct = Math.max(0, Math.min(100, (pos / distance) * 100));
+      bar.style.width = pct + "%";
+    }
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        update();
+        ticking = false;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    if (document.readyState === "complete") {
+      update();
+    } else {
+      window.addEventListener("load", update, { once: true });
+    }
+  })();
+</script>
+
+{%- endif %}

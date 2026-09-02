@@ -1,0 +1,60 @@
+<ul class="card-text list-group list-group-flush cv-timeline">
+    {% for content in entry.contents %}
+      <li class="list-group-item cv-timeline-item">
+        <div class="cv-entry">
+          {% if content.year %}
+            <div class="cv-entry-year">
+              <span class="cv-year-badge">
+                {{ content.year }}
+              </span>
+            </div>
+          {% endif %}
+          <div class="cv-entry-marker" aria-hidden="true"></div>
+          <div class="cv-entry-body">
+            {% if content.title %}
+            <h6 class="title font-weight-bold">{{content.title}}</h6>
+            {% endif %}
+            {% if content.institution %}
+            <h6>{{content.institution}}</h6>
+            {% endif %}
+            {% if content.description %}
+              <ul class="items cv-entry-list">
+                {% for item in content.description %}
+                  <li>
+                    {% if item.contents %}
+                      <span class="item-title">{{ item.title }}</span>
+                      <ul class="subitems">
+                      {% for subitem in item.contents %}
+                        <li><span class="subitem">{{ subitem }}</span></li>
+                      {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="item">{{ item }}</span>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+            {% if content.items %}
+              <ul class="items cv-entry-list">
+                {% for item in content.items %}
+                  <li>
+                    {% if item.contents %}
+                      <span class="item-title">{{ item.title }}</span>
+                      <ul class="subitems">
+                      {% for subitem in item.contents %}
+                        <li><span class="subitem">{{ subitem }}</span></li>
+                      {% endfor %}
+                      </ul>
+                    {% else %}
+                      <span class="item">{{ item }}</span>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+      </li>
+    {% endfor %}
+    </ul>

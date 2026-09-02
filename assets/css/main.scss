@@ -1,0 +1,25 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+@charset "utf-8";
+
+@use "variables";
+@use "mixins";
+@use "themes";
+// Bootstrap replacement — must precede layout/base/design_system so their
+// overrides win the cascade exactly as they did against the old CDN CSS.
+@use "bootstrap_subset";
+@use "layout";
+@use "base";
+@use "icons";
+@use "toc";
+@use "blog_enhancements";
+@use "pseudocode";
+@use "distill";
+@use "design_system";
+
+// Dimensions
+:root {
+  --max-content-width: {{ site.max_width }};
+}
+/* cache bust */

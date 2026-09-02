@@ -1,0 +1,73 @@
+    <!-- Metadata, OpenGraph and Schema.org -->
+    {% include metadata.html %}
+
+    <!-- DNS Prefetch & Preconnect for faster external resource loading -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Bootstrap CSS replaced by self-hosted subset: _sass/_bootstrap_subset.scss -->
+
+    <!-- Fonts (icons are self-hosted in _sass/_icons.scss) -->
+    <!-- Refined type system: Fraunces (display), Source Serif 4 (body), Inter (UI), JetBrains Mono (meta), Noto Serif SC (CJK) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+
+    <!-- Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/{{ site.highlight_theme_light | append: '.css' }}" media="" id="highlight_theme_light" />
+
+    {%- if site.enable_pseudocode -%}
+    <!-- Pseudocode -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@{{ site.pseudocode.version }}/build/pseudocode.min.css" integrity="{{ site.pseudocode.integrity.css }}" crossorigin="anonymous">
+    {%- endif -%}
+
+    <!-- Styles -->
+    {% if site.icon.size <= 4 %}
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>{{ site.icon }}</text></svg>">
+    {% elsif site.icon != blank %}
+    <link rel="shortcut icon" href="{{ site.icon | prepend: '/assets/img/' | relative_url}}"/>
+    {% endif %}
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+    {%- assign _canonical_target = page.url | replace:'index.html','' | absolute_url -%}
+    {%- if page.redirect -%}
+      {%- if page.redirect == true or page.redirect == 'true' -%}
+        {%- assign _canonical_target = '/' | absolute_url -%}
+      {%- elsif page.redirect contains '://' -%}
+        {%- assign _canonical_target = page.redirect -%}
+      {%- else -%}
+        {%- assign _canonical_target = page.redirect | absolute_url -%}
+      {%- endif -%}
+    {%- elsif target -%}
+      {%- if target contains '://' -%}
+        {%- assign _canonical_target = target -%}
+      {%- else -%}
+        {%- assign _canonical_target = target | absolute_url -%}
+      {%- endif -%}
+    {%- endif -%}
+    <link rel="canonical" href="{{ _canonical_target }}">
+    {%- assign _page_lang = page.lang | default: site.lang | downcase | replace: '_', '-' -%}
+    {%- if _page_lang == 'zh-cn' or _page_lang == 'cn' -%}
+      {%- assign _page_lang = 'zh' -%}
+    {%- endif -%}
+    {%- if page.zh_url -%}
+    <link rel="alternate" hreflang="en" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+    <link rel="alternate" hreflang="zh-CN" href="{{ page.zh_url | replace:'index.html','' | absolute_url }}">
+    <link rel="alternate" hreflang="x-default" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+    {%- elsif page.en_url -%}
+    <link rel="alternate" hreflang="zh-CN" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+    <link rel="alternate" hreflang="en" href="{{ page.en_url | replace:'index.html','' | absolute_url }}">
+    <link rel="alternate" hreflang="x-default" href="{{ page.en_url | replace:'index.html','' | absolute_url }}">
+    {%- endif -%}
+
+    <!-- Dark Mode -->
+    {% if site.enable_darkmode %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/{{ site.highlight_theme_dark | append: '.css' }}" media="none" id="highlight_theme_dark" />
+
+    <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/dark_mode.js' | relative_url }}"></script>
+    {% endif %}
+
+    <!-- Instant.page prefetches links on hover/touchstart, covering in-site navigation -->
+    <script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module" defer></script>

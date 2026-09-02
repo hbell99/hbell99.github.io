@@ -1,12 +1,14 @@
 ---
 layout: cv
 permalink: /cv/
-title: CV
+title: A concise record of education, research, and honors.
+display_title: 'A concise <span class="blog-title__dropcap">R</span>ecord of education, research, and honors.'
+tab_title: CV
+nav_title: CV
+description: A concise overview of my education, research experience, and honors.
+eyebrow: Curriculum Vitæ
+lead: A working document. I keep it short and honest. If you need the PDF, send me an email and I'll reply with the latest version.
 nav: true
-nav_order: 5
-cv_pdf: /assets/pdf/example_pdf.pdf # you can also use external links here
-cv_format: rendercv # options: rendercv, jsonresume
-description: This is a description of the page. You can modify it in '_pages/cv.md'. You can also change or remove the top pdf download button.
-toc:
-  sidebar: left
+nav_order: 2
+cv_pdf:
 ---

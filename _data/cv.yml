@@ -1,74 +1,63 @@
-cv:
-  name: Huayu Deng
-  headline: PhD student at Shanghai Jiao Tong University working on deep learning, reinforcement learning, LLM post-training, and AI for physics. Currently a research intern at RedNote.
-  email: denghuayu86@163.com
-  location: Shanghai, China
+- title: General Information
+  type: map
+  contents:
+    - name: Full Name
+      value: Huayu Deng (邓画予)
+    - name: Email
+      value: denghuayu86@163.com
+    - name: Updated Time
+      value: 2026-09-02
 
-  social_networks:
-    - network: GitHub
-      username: hbell99
+- title: Education
+  type: time_table
+  contents:
+    - title: Ph.D. Candidate
+      institution: Wu Wenjun Honors Class in AI, Shanghai Jiao Tong University, Shanghai, China
+      year: 2022-Present
+    - title: B.Eng.
+      institution: IEEE Honors Class, Shanghai Jiao Tong University, Shanghai, China
+      year: 2018-2022
 
-  sections:
-    Education:
-      - institution: Shanghai Jiao Tong University
-        location: Shanghai, China
-        area: Computer Science and Technology (Wu Wenjun Honors Class in AI)
-        studyType: PhD
-        start_date: 2022-09
-        end_date: present
-        highlights:
-          - "Advisors: Yunbo Wang, Xiaokang Yang"
-          - "Research: deep learning, reinforcement learning, LLM post-training, AI4Physics"
-          - "7 first-/co-authored papers at CCF-A conferences, including an ICML 2026 Oral"
+- title: Research Interests
+  type: nested_list
+  contents:
+    - title: AI for Physics
+      items:
+        - Active sensing and world models for continuum field reconstruction
+        - Learning hidden physical dynamics from visual observations
+        - Adaptive, multi-scale simulation of physical systems
+    - title: LLM Post-training & Embodied Interaction
+      items:
+        - Test-time training and long-context reasoning for LLMs
+        - Transferring interaction knowledge from video to physical control
 
-      - institution: Shanghai Jiao Tong University
-        location: Shanghai, China
-        area: Computer Science and Technology (IEEE Honors Class)
-        studyType: B.Eng.
-        start_date: 2018-09
-        end_date: 2022-06
-        highlights:
-          - "GPA 90.83/100, ranked 11/134"
-          - "Outstanding Graduate of SJTU, 2022"
-          - "Zhiyuan Honors Program (top 20% of the School of Engineering)"
+- title: Experience
+  type: time_table
+  contents:
+    - title: Research Intern
+      institution: Pevek Foundation Model Team, RedNote (小红书)
+      year: 2026-Present
+      description:
+        - Large language model post-training — data construction, training experiments, and evaluation for the Pevek foundation model
+    - title: Research Intern
+      institution: Microsoft Research Asia (MSRA)
+      year: 2021-2021
+      description:
+        - Conditional graphic layout generation (LayoutFormer++), published at CVPR 2023
 
-    Experience:
-      - company: RedNote (小红书), Pevek Foundation Model Team
-        position: Research Intern
-        location: Shanghai, China
-        start_date: 2026-03
-        end_date: present
-        summary: Large language model post-training.
-        highlights:
-          - "Worked on the full post-training pipeline of the Pevek foundation model, covering data construction, training configuration, evaluation, and regression testing."
-          - "Ran SFT, OPD, and RL post-training experiments, iterating on data mixtures, hyperparameters, prompt templates, and sampling strategies to improve general and domain-specific capabilities."
-          - "Used MS-Swift and Slime for training, and vLLM/SGLang for inference and evaluation, to support fast experiment iteration."
+- title: Honors and Awards
+  type: time_table
+  contents:
+    - year: 2022
+      items:
+        - First Prize, SJTU Graduate Academic Scholarship
+        - Outstanding Graduate (Undergraduate), Shanghai Jiao Tong University
+    - year: 2018-2020
+      items:
+        - Zhiyuan Honors Scholarship, Shanghai Jiao Tong University
 
-      - company: Microsoft Research Asia (MSRA)
-        position: Research Intern
-        location: Beijing, China
-        start_date: 2021-07
-        end_date: 2021-12
-        summary: "Conditional graphic layout generation (LayoutFormer++), advised by Jian-Guang Lou and Dongmei Zhang."
-        highlights:
-          - "Proposed LayoutFormer++: a constraint serialization scheme that unifies diverse user constraints into a token sequence, with a Transformer encoder-decoder for sequence-to-sequence conditional layout generation."
-          - "Proposed Decoding Space Restriction, a constraint- and probability-pruning strategy with backtracking to improve constraint satisfaction at inference time."
-          - "Achieved state-of-the-art generation quality and constraint satisfaction on RICO and PubLayNet across 6 layout generation tasks; integrated into Microsoft Office PowerPoint's Designer feature."
-          - "Published at CVPR 2023."
-
-    Awards:
-      - name: First Prize, SJTU Graduate Academic Scholarship
-        summary: Awarded by Shanghai Jiao Tong University
-        date: 2022
-
-      - name: Outstanding Graduate (Undergraduate)
-        summary: Awarded by Shanghai Jiao Tong University
-        date: 2022
-
-      - name: Zhiyuan Honors Scholarship (Undergraduate)
-        summary: Awarded by Shanghai Jiao Tong University
-        date: 2018-2020
-
-    Academic Service:
-      - label: Reviewer
-        details: NeurIPS, ICML, CVPR, ICLR, AAAI
+- title: Professional Services
+  type: map
+  contents:
+    - name: Conference Reviewer
+      value: NeurIPS, ICML, CVPR, ICLR, AAAI

@@ -1,0 +1,69 @@
+---
+layout: default
+---
+
+<!-- about.html -->
+      <div class="post">
+        <header class="post-header hero">
+          <h1 class="post-title signature-name">
+           <span class="name-zh">邓画予</span><span class="name-sep" aria-hidden="true">|</span><span class="name-en">Huayu Deng</span>
+          </h1>
+          <p class="desc">{{ page.subtitle }}</p>
+        </header>
+
+        <article>
+          {% if page.profile -%}
+          <div class="profile float-{%- if page.profile.align == 'left' -%}left{%- else -%}right{%- endif -%}">
+            {%- if page.profile.image %}
+              {%- assign profile_image_path = page.profile.image | prepend: 'assets/img/' -%}
+
+              {% if page.profile.image_circular %}
+                {%- assign profile_image_class = "img-fluid z-depth-1 rounded-circle" -%}
+              {% else %}
+                {%- assign profile_image_class = "img-fluid z-depth-1 rounded" -%}
+              {% endif %}
+
+              {% include figure.html
+              path=profile_image_path
+              class=profile_image_class
+              loading="eager"
+              alt=page.profile.image -%}
+            {% endif -%}
+            {%- if page.profile.address %}
+            <div class="address">
+              {{ page.profile.address }}
+            </div>
+            {%- endif %}
+          </div>
+          {%- endif %}
+
+          <div class="clearfix">
+            {{ content }}
+          </div>
+
+          <!-- News -->
+          {% if page.news -%}
+            <div class="about-section-head">
+              <h2><a href="{{ '/news/' | relative_url }}">News</a></h2>
+              <a class="about-section-head__more" href="{{ '/news/' | relative_url }}">all news &rarr;</a>
+            </div>
+            {%- include news.html limit=true scrollable=site.news_scrollable %}
+          {%- endif %}
+
+          <!-- Selected papers -->
+          {% if page.selected_papers -%}
+            <div class="about-section-head">
+              <h2><a href="{{ '/publications/' | relative_url }}">Selected Papers</a></h2>
+              <a class="about-section-head__more" href="{{ '/publications/' | relative_url }}">all publications &rarr;</a>
+            </div>
+            <div class="about-selected-papers">
+              <div class="about-selected-papers__intro">
+                Full publications are available on <a href="https://scholar.google.com/citations?user={{ site.scholar_userid }}" target="_blank" rel="noopener">Google Scholar</a> or <a href="{{ '/publications/' | relative_url }}">Publications</a> (<em>*</em> denotes equal contribution). Works are organized by topic: <strong>AI4Physics</strong>, <strong>LLM &amp; Embodied AI</strong>.
+              </div>
+              {%- include selected_papers.html %}
+            </div>
+          {%- endif %}
+
+        </article>
+
+</div>

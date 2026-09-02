@@ -1,0 +1,11 @@
+# Projects data for /projects/ page.
+# Each entry renders as one card. Add entries here, e.g.:
+#
+# - name: LASER
+#   repo: github.com/your-username/laser
+#   blurb: >-
+#     Short description of the project.
+#   language: Python
+#   stars:
+#   forks:
+#   tags: [reinforcement-learning]
