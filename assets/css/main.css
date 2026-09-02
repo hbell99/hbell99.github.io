@@ -5000,7 +5000,7 @@ html[data-theme=dark] .publications .venue-tag.active-filter .venue-name {
 .selected-paper-card__authors {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
   color: var(--fg-2);
 }
