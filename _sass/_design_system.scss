@@ -1094,6 +1094,8 @@ html[data-theme='dark'] .publications .bibliography .links .bibtex-copy.is-faile
 .publications .pub-meta-row .pub-meta-venue {
   text-transform: none;
   white-space: normal;
+  font-weight: 600;
+  color: var(--ink-ochre) !important;
 }
 .publications .pub-meta-row .selected-mark {
   margin-right: 0;
@@ -1304,7 +1306,12 @@ html[data-theme='dark'] .publications .venue-tag.active-filter .venue-name { col
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--ink-ochre);
+  /* Overrides the shared .mono-meta class (also on this element), which sets
+     text-transform: lowercase and a muted color — without !important here,
+     that rule wins on any tie since it declares text-transform at all and
+     this one didn't. */
+  text-transform: none !important;
+  color: var(--ink-ochre) !important;
 }
 .selected-paper-card__title {
   margin: 0;
