@@ -4722,15 +4722,18 @@ html[data-theme=dark] .publications .bibliography .links .bibtex-copy.is-failed 
 
 /* Venue badges inside periodical line */
 .publications .bibliography .periodical em {
-  font-family: var(--font-serif);
-  font-style: italic;
-  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-style: normal;
+  color: var(--accent);
 }
 
 .publications .bibliography .periodical {
-  font-family: var(--font-serif);
-  color: var(--fg-2);
-  font-size: 0.95rem;
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 /* Venue tag (topic chip sitting beside entries) — filled pill with clear hover/active feedback */
@@ -4960,7 +4963,8 @@ html[data-theme=dark] .publications .venue-tag.active-filter .venue-name {
 
 .selected-paper-card__venue {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
