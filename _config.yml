@@ -192,6 +192,7 @@ exclude:
   - docker-compose.yml
   - docker-local.yml
   - Gemfile
+  - 本地预览.md
   - Gemfile.lock
   - node_modules
   - README.md
