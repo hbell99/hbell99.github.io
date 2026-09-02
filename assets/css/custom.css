@@ -2,6 +2,9 @@
 
 /* ----------------------------------------------------------------------------
  * Design tokens — adapted from xihuai18.github.io's paper/ink + moss palette.
+ * Light values live on :root; dark values mirror them under the theme
+ * toggle's html[data-theme="dark"] attribute so nothing hardcodes a color
+ * that would clash with the current theme.
  * -------------------------------------------------------------------------- */
 :root {
   --paper: #ffffff;
@@ -15,11 +18,12 @@
   --moss-50: #eef6ed;
   --moss-500: #2f7a2a;
   --moss-600: #215c1f;
-  --moss-700: #16401a;
 
   --accent: var(--moss-500);
   --accent-hover: var(--moss-600);
   --accent-wash: var(--moss-50);
+
+  --navbar-bg: rgba(255, 255, 255, 0.85);
 
   --font-display: "Fraunces", "Noto Serif SC", "Source Serif 4", Georgia, serif;
   --font-serif: "Source Serif 4", "Noto Serif SC", Georgia, "Times New Roman", serif;
@@ -41,8 +45,9 @@
   --t-fast: 140ms cubic-bezier(0.22, 1, 0.36, 1);
   --t-med: 240ms cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* al-folio's own theme variables — keep these in sync with the palette above
-     so components that already read --global-* pick up the same accent. */
+  /* al-folio's own theme variables — keep these in sync with the palette
+     above so components that already read --global-* pick up the same
+     accent instead of the stock purple/white. */
   --global-theme-color: var(--accent);
   --global-hover-color: var(--accent-hover);
   --global-bg-color: var(--paper);
@@ -50,6 +55,44 @@
   --global-text-color-light: var(--ink-3);
   --global-divider-color: var(--rule);
   --global-card-bg-color: var(--paper);
+  --global-footer-bg-color: var(--paper);
+  --global-footer-text-color: var(--ink-3);
+  --global-footer-link-color: var(--accent);
+}
+
+html[data-theme="dark"] {
+  --paper: #0e1013;
+  --paper-2: #151921;
+  --ink: #e8e5dc;
+  --ink-2: #c2c0b8;
+  --ink-3: #8a8880;
+  --rule: rgba(232, 229, 220, 0.1);
+  --rule-strong: rgba(232, 229, 220, 0.22);
+
+  --moss-50: #1a2619;
+  --moss-500: #6fb366;
+  --moss-600: #8fc987;
+
+  --accent: var(--moss-500);
+  --accent-hover: var(--moss-600);
+  --accent-wash: var(--moss-50);
+
+  --navbar-bg: rgba(14, 16, 19, 0.82);
+
+  --shadow-xs: 0 1px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -10px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.25);
+
+  --global-theme-color: var(--accent);
+  --global-hover-color: var(--accent-hover);
+  --global-bg-color: var(--paper);
+  --global-text-color: var(--ink);
+  --global-text-color-light: var(--ink-3);
+  --global-divider-color: var(--rule);
+  --global-card-bg-color: #1a1e25;
+  --global-footer-bg-color: var(--paper);
+  --global-footer-text-color: var(--ink-3);
+  --global-footer-link-color: var(--accent);
 }
 
 /* ----------------------------------------------------------------------------
@@ -57,14 +100,12 @@
  * -------------------------------------------------------------------------- */
 body {
   font-family: var(--font-serif);
-  color: var(--ink);
-  background: var(--paper);
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: #d6eacf;
+  background: var(--accent-wash);
   color: var(--ink);
 }
 
@@ -74,7 +115,6 @@ h1, h2, h3, h4, h5, h6,
 .post-title {
   font-family: var(--font-display);
   font-weight: 600;
-  color: var(--ink);
   letter-spacing: -0.01em;
 }
 
@@ -127,7 +167,7 @@ hr {
  * Cards (used for CV sections, projects, books)
  * -------------------------------------------------------------------------- */
 .card {
-  background: var(--paper);
+  background: var(--global-card-bg-color) !important;
   border: 1px solid var(--rule) !important;
   border-radius: var(--r-md);
   box-shadow: var(--shadow-xs) !important;
@@ -147,7 +187,7 @@ hr {
 
 .card-text {
   font-family: var(--font-serif);
-  color: var(--ink-2);
+  color: var(--ink-2) !important;
 }
 
 /* ----------------------------------------------------------------------------
@@ -174,6 +214,31 @@ hr {
   color: #fff !important;
 }
 
+/* Publication action pills (arXiv / PDF / Code / Bib) — pill-shaped outline
+   buttons, matching the reference layout. */
+.bibliography .links .btn {
+  border: 1px solid var(--rule-strong) !important;
+  border-radius: var(--r-pill) !important;
+  color: var(--ink) !important;
+  background: transparent !important;
+}
+
+.bibliography .links .btn:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: var(--accent-wash) !important;
+}
+
+.bibliography .links .bibtex.btn {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.bibliography .links .bibtex.btn:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
 /* ----------------------------------------------------------------------------
  * Venue badges (abbr pills next to each publication)
  * -------------------------------------------------------------------------- */
@@ -185,15 +250,29 @@ hr {
   text-transform: uppercase;
   border-radius: var(--r-pill);
   padding: 4px 10px;
+  background: var(--accent-wash);
+  color: var(--accent-hover);
 }
 
 /* ----------------------------------------------------------------------------
- * Publication entries
+ * Publication entries — bordered card per entry, like the reference layout.
  * -------------------------------------------------------------------------- */
+.publications .row {
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  padding: var(--s-4) var(--s-4) var(--s-3);
+  margin-bottom: var(--s-4);
+  transition: border-color var(--t-med), box-shadow var(--t-med);
+}
+
+.publications .row:hover {
+  border-color: var(--rule-strong);
+  box-shadow: var(--shadow-sm);
+}
+
 .bibliography .title {
   font-family: var(--font-display);
   font-weight: 600;
-  color: var(--ink);
 }
 
 .bibliography .author {
@@ -219,7 +298,7 @@ hr {
  * Navbar
  * -------------------------------------------------------------------------- */
 .navbar {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: var(--navbar-bg) !important;
   -webkit-backdrop-filter: saturate(140%) blur(12px);
   backdrop-filter: saturate(140%) blur(12px);
   border-bottom: 1px solid var(--rule) !important;
@@ -232,14 +311,33 @@ hr {
   font-weight: 500;
   font-size: 0.85rem;
   letter-spacing: 0.01em;
+  text-transform: capitalize;
   color: var(--ink) !important;
   border-radius: var(--r-sm);
   transition: color var(--t-fast), background var(--t-fast);
+  position: relative;
 }
 
 .navbar .nav-link:hover {
   color: var(--accent) !important;
   background: var(--paper-2) !important;
+}
+
+.navbar .nav-item.active .nav-link {
+  color: var(--accent) !important;
+  font-weight: 600;
+}
+
+.navbar .nav-item.active .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 18px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  transform: translateX(-50%);
 }
 
 /* ----------------------------------------------------------------------------
@@ -248,8 +346,6 @@ hr {
 footer {
   font-family: var(--font-sans);
   font-size: 12px;
-  color: var(--ink-3);
-  background: var(--paper) !important;
   border-top: 1px solid var(--rule);
 }
 
