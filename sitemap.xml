@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>https://hbell99.github.io/reinforcement-learning/2026/09/02/kl-divergence-correct-form.html</loc>
+<lastmod>2026-09-02T00:00:00+00:00</lastmod>
+</url>
+<url>
 <loc>https://hbell99.github.io/</loc>
 </url>
 <url>
@@ -17,5 +21,11 @@
 </url>
 <url>
 <loc>https://hbell99.github.io/publications/</loc>
+</url>
+<url>
+<loc>https://hbell99.github.io/blog/category/reinforcement-learning/</loc>
+</url>
+<url>
+<loc>https://hbell99.github.io/blog/2026/</loc>
 </url>
 </urlset>

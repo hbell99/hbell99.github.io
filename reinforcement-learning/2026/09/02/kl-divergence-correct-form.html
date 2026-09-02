@@ -1,0 +1,1428 @@
+<!DOCTYPE html><html lang="zh-CN">
+
+  <!-- Head -->
+  <head>    <!-- Metadata, OpenGraph and Schema.org -->
+    
+
+    <!-- Standard metadata -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>LLM 强化学习中 KL 散度的正确形式是什么 | Huayu Deng's Page</title><meta name="author" content="Huayu  Deng" />
+    <meta name="description" content="从&quot;无偏&quot;和&quot;有偏&quot;的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明&quot;有偏性是估计器和放置位置组合的属性，不是估计器本身的属性&quot;。" />
+    <meta name="keywords" content="Reinforcement Learning, AI4Physics, LLM Post-training" />
+
+    <!-- 
+    Unified Share Image URL Calculation
+    Priority:
+    1) page.disable_share_image / page.share_image: none  -> no image
+    2) page.og_image                                     -> explicit per-page image
+    3) dynamic generation (posts)                         -> horizontal OG via Tailgraph
+    4) site.og_image == 'auto'                            -> horizontal OG via Tailgraph for non-post pages
+    5) site.og_image                                      -> site default
+    This keeps homepage free to use a portrait image while giving blog pages a better horizontal card.
+    --><!-- Itemprop meta tags for Zhihu and other platforms using Schema.org microdata -->
+    <meta itemprop="name" content="LLM 强化学习中 KL 散度的正确形式是什么" />
+    <meta itemprop="description" content="从&quot;无偏&quot;和&quot;有偏&quot;的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明&quot;有偏性是估计器和放置位置组合的属性，不是估计器本身的属性&quot;。" /><meta itemprop="image" content="https://og.tailgraph.com/og?fontFamily=Inter&title=Huayu%27s+Blog+%7C+LLM+%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%AD+KL+%E6%95%A3%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%BD%A2%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88&titleTailwind=font-bold%20text-4xl%20text-white&titleFontFamily=Inter&text=%E4%BB%8E%22%E6%97%A0%E5%81%8F%22%E5%92%8C%22%E6%9C%89%E5%81%8F%22%E7%9A%84%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%87%BA%E5%8F%91%EF%BC%8C%E6%8B%86%E8%A7%A3+k1%2Fk2%2Fk3+%E4%B8%89%E7%A7%8D+KL+%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%9C%A8+KL-in-Reward+%E5%92%8C+KL-in-Loss+%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E4%B8%8B%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%A1%8C%E4%B8%BA%EF%BC%8C%E8%AF%B4%E6%98%8E%22%E6%9C%89%E5%81%8F%E6%80%A7%E6%98%AF%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%92%8C%E6%94%BE%E7%BD%AE%E4%BD%8D%E7%BD%AE%E7%BB%84%E5%90%88%E7%9A%84%E5%B1%9E...&textTailwind=text-lg%20mt-4%20text-gray-300&textFontFamily=Inter&logoTailwind=h-12&bgTailwind=bg-gradient-to-br%20from-green-900%20via-emerald-800%20to-teal-900&footer=Huayu++Deng%20%C2%B7%202026-09-02&footerTailwind=text-gray-400&containerTailwind=p-12" /><!-- WeChat/Weibo/QQ specific meta tags for Chinese social platforms --><meta name="weibo:article:title" content="Huayu&#39;s Blog | LLM 强化学习中 KL 散度的正确形式是什么" />
+    <meta name="weibo:article:description" content="从&quot;无偏&quot;和&quot;有偏&quot;的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明&quot;有偏性是估计器和放置位置组合的属性，不是估计器本身的属性&quot;。" /><meta name="weibo:article:image" content="https://og.tailgraph.com/og?fontFamily=Inter&title=Huayu%27s+Blog+%7C+LLM+%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%AD+KL+%E6%95%A3%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%BD%A2%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88&titleTailwind=font-bold%20text-4xl%20text-white&titleFontFamily=Inter&text=%E4%BB%8E%22%E6%97%A0%E5%81%8F%22%E5%92%8C%22%E6%9C%89%E5%81%8F%22%E7%9A%84%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%87%BA%E5%8F%91%EF%BC%8C%E6%8B%86%E8%A7%A3+k1%2Fk2%2Fk3+%E4%B8%89%E7%A7%8D+KL+%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%9C%A8+KL-in-Reward+%E5%92%8C+KL-in-Loss+%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E4%B8%8B%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%A1%8C%E4%B8%BA%EF%BC%8C%E8%AF%B4%E6%98%8E%22%E6%9C%89%E5%81%8F%E6%80%A7%E6%98%AF%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%92%8C%E6%94%BE%E7%BD%AE%E4%BD%8D%E7%BD%AE%E7%BB%84%E5%90%88%E7%9A%84%E5%B1%9E...&textTailwind=text-lg%20mt-4%20text-gray-300&textFontFamily=Inter&logoTailwind=h-12&bgTailwind=bg-gradient-to-br%20from-green-900%20via-emerald-800%20to-teal-900&footer=Huayu++Deng%20%C2%B7%202026-09-02&footerTailwind=text-gray-400&containerTailwind=p-12" />
+
+    <!-- OpenGraph -->
+    <meta property="og:site_name" content="Huayu Deng's Page" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2026-09-02T00:00:00+00:00" /><meta property="article:author" content="Huayu  Deng" /><meta property="og:title" content="Huayu&#39;s Blog | LLM 强化学习中 KL 散度的正确形式是什么" />
+    <meta property="og:url" content="https://hbell99.github.io/reinforcement-learning/2026/09/02/kl-divergence-correct-form.html" />
+    <meta property="og:description" content="从&quot;无偏&quot;和&quot;有偏&quot;的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明&quot;有偏性是估计器和放置位置组合的属性，不是估计器本身的属性&quot;。" /><meta property="og:image" content="https://og.tailgraph.com/og?fontFamily=Inter&title=Huayu%27s+Blog+%7C+LLM+%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%AD+KL+%E6%95%A3%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%BD%A2%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88&titleTailwind=font-bold%20text-4xl%20text-white&titleFontFamily=Inter&text=%E4%BB%8E%22%E6%97%A0%E5%81%8F%22%E5%92%8C%22%E6%9C%89%E5%81%8F%22%E7%9A%84%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%87%BA%E5%8F%91%EF%BC%8C%E6%8B%86%E8%A7%A3+k1%2Fk2%2Fk3+%E4%B8%89%E7%A7%8D+KL+%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%9C%A8+KL-in-Reward+%E5%92%8C+KL-in-Loss+%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E4%B8%8B%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%A1%8C%E4%B8%BA%EF%BC%8C%E8%AF%B4%E6%98%8E%22%E6%9C%89%E5%81%8F%E6%80%A7%E6%98%AF%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%92%8C%E6%94%BE%E7%BD%AE%E4%BD%8D%E7%BD%AE%E7%BB%84%E5%90%88%E7%9A%84%E5%B1%9E...&textTailwind=text-lg%20mt-4%20text-gray-300&textFontFamily=Inter&logoTailwind=h-12&bgTailwind=bg-gradient-to-br%20from-green-900%20via-emerald-800%20to-teal-900&footer=Huayu++Deng%20%C2%B7%202026-09-02&footerTailwind=text-gray-400&containerTailwind=p-12" />
+    <meta property="og:image:secure_url" content="https://og.tailgraph.com/og?fontFamily=Inter&title=Huayu%27s+Blog+%7C+LLM+%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%AD+KL+%E6%95%A3%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%BD%A2%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88&titleTailwind=font-bold%20text-4xl%20text-white&titleFontFamily=Inter&text=%E4%BB%8E%22%E6%97%A0%E5%81%8F%22%E5%92%8C%22%E6%9C%89%E5%81%8F%22%E7%9A%84%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%87%BA%E5%8F%91%EF%BC%8C%E6%8B%86%E8%A7%A3+k1%2Fk2%2Fk3+%E4%B8%89%E7%A7%8D+KL+%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%9C%A8+KL-in-Reward+%E5%92%8C+KL-in-Loss+%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E4%B8%8B%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%A1%8C%E4%B8%BA%EF%BC%8C%E8%AF%B4%E6%98%8E%22%E6%9C%89%E5%81%8F%E6%80%A7%E6%98%AF%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%92%8C%E6%94%BE%E7%BD%AE%E4%BD%8D%E7%BD%AE%E7%BB%84%E5%90%88%E7%9A%84%E5%B1%9E...&textTailwind=text-lg%20mt-4%20text-gray-300&textFontFamily=Inter&logoTailwind=h-12&bgTailwind=bg-gradient-to-br%20from-green-900%20via-emerald-800%20to-teal-900&footer=Huayu++Deng%20%C2%B7%202026-09-02&footerTailwind=text-gray-400&containerTailwind=p-12" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Huayu&#39;s Blog | LLM 强化学习中 KL 散度的正确形式是什么" /><meta property="og:locale" content="zh_CN" />
+
+        <!-- Twitter card --><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content="Huayu&#39;s Blog | LLM 强化学习中 KL 散度的正确形式是什么" />
+    <meta name="twitter:description" content="从&quot;无偏&quot;和&quot;有偏&quot;的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明&quot;有偏性是估计器和放置位置组合的属性，不是估计器本身的属性&quot;。" /><meta name="twitter:image" content="https://og.tailgraph.com/og?fontFamily=Inter&title=Huayu%27s+Blog+%7C+LLM+%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%AD+KL+%E6%95%A3%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%BD%A2%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88&titleTailwind=font-bold%20text-4xl%20text-white&titleFontFamily=Inter&text=%E4%BB%8E%22%E6%97%A0%E5%81%8F%22%E5%92%8C%22%E6%9C%89%E5%81%8F%22%E7%9A%84%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%87%BA%E5%8F%91%EF%BC%8C%E6%8B%86%E8%A7%A3+k1%2Fk2%2Fk3+%E4%B8%89%E7%A7%8D+KL+%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%9C%A8+KL-in-Reward+%E5%92%8C+KL-in-Loss+%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E4%B8%8B%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%A1%8C%E4%B8%BA%EF%BC%8C%E8%AF%B4%E6%98%8E%22%E6%9C%89%E5%81%8F%E6%80%A7%E6%98%AF%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%92%8C%E6%94%BE%E7%BD%AE%E4%BD%8D%E7%BD%AE%E7%BB%84%E5%90%88%E7%9A%84%E5%B1%9E...&textTailwind=text-lg%20mt-4%20text-gray-300&textFontFamily=Inter&logoTailwind=h-12&bgTailwind=bg-gradient-to-br%20from-green-900%20via-emerald-800%20to-teal-900&footer=Huayu++Deng%20%C2%B7%202026-09-02&footerTailwind=text-gray-400&containerTailwind=p-12" />
+    <meta name="twitter:image:alt" content="Huayu&#39;s Blog | LLM 强化学习中 KL 散度的正确形式是什么" />
+    
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org","@type": "BlogPosting",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://hbell99.github.io/reinforcement-learning/2026/09/02/kl-divergence-correct-form.html"
+        },
+        "headline": "LLM 强化学习中 KL 散度的正确形式是什么",
+        "description": "从\"无偏\"和\"有偏\"的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明\"有偏性是估计器和放置位置组合的属性，不是估计器本身的属性\"。",
+        "inLanguage": "zh-CN","image": "https://og.tailgraph.com/og?fontFamily=Inter&title=Huayu%27s+Blog+%7C+LLM+%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B8%AD+KL+%E6%95%A3%E5%BA%A6%E7%9A%84%E6%AD%A3%E7%A1%AE%E5%BD%A2%E5%BC%8F%E6%98%AF%E4%BB%80%E4%B9%88&titleTailwind=font-bold%20text-4xl%20text-white&titleFontFamily=Inter&text=%E4%BB%8E%22%E6%97%A0%E5%81%8F%22%E5%92%8C%22%E6%9C%89%E5%81%8F%22%E7%9A%84%E5%88%A4%E6%96%AD%E6%A0%87%E5%87%86%E5%87%BA%E5%8F%91%EF%BC%8C%E6%8B%86%E8%A7%A3+k1%2Fk2%2Fk3+%E4%B8%89%E7%A7%8D+KL+%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%9C%A8+KL-in-Reward+%E5%92%8C+KL-in-Loss+%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E4%B8%8B%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%A1%8C%E4%B8%BA%EF%BC%8C%E8%AF%B4%E6%98%8E%22%E6%9C%89%E5%81%8F%E6%80%A7%E6%98%AF%E4%BC%B0%E8%AE%A1%E5%99%A8%E5%92%8C%E6%94%BE%E7%BD%AE%E4%BD%8D%E7%BD%AE%E7%BB%84%E5%90%88%E7%9A%84%E5%B1%9E...&textTailwind=text-lg%20mt-4%20text-gray-300&textFontFamily=Inter&logoTailwind=h-12&bgTailwind=bg-gradient-to-br%20from-green-900%20via-emerald-800%20to-teal-900&footer=Huayu++Deng%20%C2%B7%202026-09-02&footerTailwind=text-gray-400&containerTailwind=p-12","author": {
+          "@type": "Person",
+          "name": "Huayu  Deng"
+        },"publisher": {
+          "@type": "Person",
+          "name": "Huayu  Deng"
+        },"datePublished": "2026-09-02T00:00:00+00:00","dateModified": "2026-09-02T00:00:00+00:00","url": "https://hbell99.github.io/reinforcement-learning/2026/09/02/kl-divergence-correct-form.html",
+        "sameAs": ["https://scholar.google.com/citations?user=t5xjYnsAAAAJ","https://github.com/hbell99"]
+      }
+    </script>
+
+
+    <!-- DNS Prefetch & Preconnect for faster external resource loading -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Bootstrap CSS replaced by self-hosted subset: _sass/_bootstrap_subset.scss -->
+
+    <!-- Fonts (icons are self-hosted in _sass/_icons.scss) -->
+    <!-- Refined type system: Fraunces (display), Source Serif 4 (body), Inter (UI), JetBrains Mono (meta), Noto Serif SC (CJK) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;600;700&display=swap">
+
+    <!-- Code Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/github.css" media="" id="highlight_theme_light" /><!-- Pseudocode -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@2.4.1/build/pseudocode.min.css" integrity="sha256-VwMV//xgBPDyRFVSOshhRhzJRDyBmIACniLPpeXNUdc=" crossorigin="anonymous"><!-- Styles -->
+    
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    
+    <link rel="stylesheet" href="/assets/css/main.css"><link rel="canonical" href="https://hbell99.github.io/reinforcement-learning/2026/09/02/kl-divergence-correct-form.html"><!-- Dark Mode -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jwarby/jekyll-pygments-themes@master/monokai.css" media="none" id="highlight_theme_dark" />
+
+    <script src="/assets/js/theme.js"></script>
+    <script src="/assets/js/dark_mode.js"></script>
+    
+
+    <!-- Instant.page prefetches links on hover/touchstart, covering in-site navigation -->
+    <script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module" defer></script>
+
+  </head>
+
+  <!-- Body -->
+  <body class="fixed-top-nav sticky-bottom-footer">
+
+    <!-- Header --><header>
+  <a class="skip-to-content" href="#main-content">Skip to content</a>
+
+  <!-- Nav Bar -->
+  <nav id="navbar" aria-label="Primary"
+    class="navbar navbar-light navbar-expand-sm fixed-top">
+    <div class="container"><div class="navbar-brand navbar-social-icons">
+        <a href="mailto:%64%65%6E%67%68%75%61%79%75%38%36@%31%36%33.%63%6F%6D" title="email"><i class="fas fa-envelope"></i></a>
+            <a href="https://scholar.google.com/citations?user=t5xjYnsAAAAJ" title="Google Scholar"><i class="ai ai-google-scholar"></i></a>
+            <a href="https://github.com/hbell99" title="GitHub"><i class="fab fa-github"></i></a>
+            
+
+      </div><!-- Navbar Toggle -->
+      <button class="navbar-toggler collapsed ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar top-bar"></span>
+        <span class="icon-bar middle-bar"></span>
+        <span class="icon-bar bottom-bar"></span>
+      </button>
+
+      <div class="collapse navbar-collapse text-right" id="navbarNav">
+        <ul class="navbar-nav ml-auto flex-nowrap">
+
+          <!-- About -->
+          <li class="nav-item ">
+            <a class="nav-link" href="/">About</a>
+          </li>
+          
+          <!-- Blog -->
+          <li class="nav-item ">
+            <a class="nav-link" href="/blog/">Blog</a>
+          </li>
+
+          <!-- CV -->
+                    <!-- Other pages -->
+          <li class="nav-item ">
+            <a class="nav-link" href="/publications/">Publications</a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/cv/">CV</a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="/projects/">Projects</a>
+          </li>
+          <!-- Toggle theme mode -->
+          <li class="nav-item toggle-container">
+            <button id="light-toggle" class="nav-link theme-toggle" title="Change theme" aria-label="Toggle dark mode">
+              <span class="theme-toggle__icons" aria-hidden="true">
+                <svg class="theme-toggle__moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/>
+                </svg>
+                <svg class="theme-toggle__sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                </svg>
+              </span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Scroll progress is anchored INSIDE the fixed navbar so it moves with
+         it rather than as a separate fixed element. iOS Safari's dynamic
+         address bar otherwise causes two fixed-position elements at different
+         offsets to drift relative to each other. -->
+    <div class="scroll-progress" aria-hidden="true">
+      <span class="scroll-progress__bar" id="scroll-progress-bar"></span>
+    </div>
+  </nav>
+</header>
+
+
+    <!-- Content -->
+    <main id="main-content" class="container mt-5" tabindex="-1">
+      <!-- _layouts/post.html -->
+
+<div class="post toc-layout">
+  <header class="post-header"><p class="eyebrow post-kicker">
+      <a href="/blog/?category=reinforcement-learning&lang=zh" data-filter-link data-filter-type="category" data-filter-value="reinforcement-learning">Reinforcement learning</a>
+      <span class="post-meta-dot" aria-hidden="true">&middot;</span>
+      <span>文章</span>
+    </p><h1 class="post-title">LLM 强化学习中 KL 散度的正确形式是什么</h1><p class="lead post-lead">从"无偏"和"有偏"的判断标准出发，拆解 k1/k2/k3 三种 KL 估计器在 KL-in-Reward 和 KL-in-Loss 两种实现下的梯度行为，说明"有偏性是估计器和放置位置组合的属性，不是估计器本身的属性"。</p><div class="post-meta-row">
+      <span class="post-author">Huayu  Deng</span>
+      <span class="post-meta-dot" aria-hidden="true">&middot;</span>
+      <a class="post-meta-link" href="/blog/?year=2026&lang=zh" data-filter-link data-filter-type="year" data-filter-value="2026">2026年9月2日</a>
+      <span class="post-meta-dot" aria-hidden="true">&middot;</span>
+      <span class="post-reading-time">58 分钟阅读</span></div>
+  </header>
+
+  <div class="post-links">
+  <!-- External Platform Links -->
+  
+
+  
+
+  <!-- External Source (from plugin) -->
+  
+
+  <!-- Output links -->
+  
+</div>
+
+
+  <div class="row">
+    
+      <div class="col-lg toc-content">
+    <aside class="post-toc-mobile d-lg-none" aria-label="目录">
+        <span class="eyebrow">目录</span>
+        <nav
+          class="toc"
+          data-toc
+          data-toc-content=".post-content"
+          data-toc-headings="h2"
+          data-toc-min-items="2"
+          aria-label="目录"
+        ></nav>
+      </aside>
+
+      <article class="post-content">
+        <p>我们熟知LLM里有3种典型的KL估计器，也经常听到说这个估计器是无偏的，那个估计器是有偏的；又或者听到说这个估计器虽然是无偏的但是梯度估计是有偏的。
+不熟悉的人可能会问，什么叫无偏？什么叫有偏？梯度无偏有偏又是怎么回事？</p>
+
+<p>首先，先介绍一下怎么判断”无偏”还是”有偏”？
+<strong>判断标准只有一个：看数学期望（平均值）是否等于目标值。</strong></p>
+<ul>
+  <li><strong>无偏（Unbiased）</strong>：如果你重复无数次实验，计算所有估计值的平均值，这个平均值 <strong>恰好等于</strong> 你要估计的那个真实值。</li>
+  <li><strong>有偏（Biased）</strong>：这个平均值 <strong>不等于</strong> 真实值，存在系统性偏差。</li>
+</ul>
+
+<p>对于KL无偏估计器，意味着$E[\hat{KL}]=KL$；对于梯度无偏估计器，意味着$E[\hat{g}]=\nabla_\theta L$。</p>
+
+<p>这里其实没有什么特别神秘的地方。<strong>区别只在于：你到底在估计什么。</strong></p>
+
+<p>而这句话正是整篇文章的题眼。因为在 RL 训练里，我们其实同时在估计<strong>两个不同的东西</strong>：</p>
+
+<ol>
+  <li><strong>KL 的值</strong>——它进 log、进监控面板、进 early stop 的判据，我们希望它准；</li>
+  <li><strong>KL 的梯度</strong>——它才是真正改变模型参数的东西，我们希望它指向正确的方向。</li>
+</ol>
+
+<p>这两件事<strong>没有任何逻辑蕴含关系</strong>。一个估计器可以值无偏而梯度有偏，也可以值有偏而梯度无偏。</p>
+
+<p>下面把这件事拆开讲。</p>
+
+<hr />
+
+<h2 id="一三个估计器k1--k2--k3">一、三个估计器：k1 / k2 / k3</h2>
+
+<p>先把符号定好。我们要估计的是当前 policy $\pi_\theta$ 相对参考模型 $\pi_{\text{ref}}$ 的 KL：</p>
+
+<p>$$D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}}) = \mathbb{E}_{y\sim\pi_\theta}\left[\log\frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)}\right]$$</p>
+
+<p>这里顺手把方向的名字定下来，后面会反复用到：$D_{\text{KL}}(\pi_\theta\|\pi_{\text{ref}})$ 叫<strong>反向 KL（reverse KL）</strong>——它是 mode-seeking 的，$\theta$ 只需要在自己有输出的地方跟 ref 对齐，ref 有但 $\theta$ 没生成过的地方完全不管。反过来 $D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta) = \mathbb{E}_{y\sim\pi_{\text{ref}}}[\log(\pi_{\text{ref}}/\pi_\theta)]$ 叫<strong>正向 KL（forward KL）</strong>，是 mass-covering 的——它要求 $\theta$ 在 ref 有质量的地方都不能塌成 0。</p>
+
+<p>RLHF 用反向 KL 不是随手选的：一是它只需要对 $\pi_\theta$ 采样（不用枚举 ref 的支撑集），工程上天然契合”用当前策略生成、算 log-ratio”这套流程；二是它是 zero-forcing 的——只要 $\theta$ 敢生成一个 ref 认为极不可能的东西，KL 就会爆炸，这正好是”别让模型说出 ref 绝对不会说的话”这个防 reward hacking 的诉求。本文第一节到第五节说的”KL”，如果不特别说明，都是指反向 KL $D_{\text{KL}}(\pi_\theta\|\pi_{\text{ref}})$。</p>
+
+<p>注意这是一个<strong>期望</strong>，而我们只有采样。为了记号方便，定义似然比</p>
+
+<p>$$s(y) = \frac{\pi_{\text{ref}}(y|x)}{\pi_\theta(y|x)}$$</p>
+
+<p>（注意方向：分子是 ref。这个方向的好处是 $\mathbb{E}_{y\sim\pi_\theta}[s(y)]=1$，后面反复要用。）</p>
+
+<h3 id="k1最朴素的那个">k1：最朴素的那个</h3>
+
+<p>$$k_1(y) = \log\frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)} = -\log s(y)$$</p>
+
+<p>直接把期望里的东西拿出来当估计。<strong>它显然是无偏的</strong>——这几乎是同义反复，因为 KL 的定义就是它的期望。</p>
+
+<p>但 k1 有个很扎眼的毛病：<strong>KL 恒非负，而 k1 有一半的取值空间是负数</strong>。你采一条 response，很可能算出个负的”KL”。这不是 bug，是单样本估计的本性，但它意味着<strong>方差极大</strong>。</p>
+
+<p>这个方差有多大？我做了个数值实验（50 类离散分布，附录有脚本）：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th>真实 KL</th>
+      <th>k1 的标准差</th>
+      <th>标准差 / 信号</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0.1921</td>
+      <td>0.6435</td>
+      <td>3.3×</td>
+    </tr>
+    <tr>
+      <td>0.0197</td>
+      <td>0.2001</td>
+      <td>10×</td>
+    </tr>
+    <tr>
+      <td>0.0011</td>
+      <td>0.0476</td>
+      <td>42×</td>
+    </tr>
+    <tr>
+      <td>0.00018</td>
+      <td>0.0190</td>
+      <td><strong>105×</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>结论很清楚：<strong>$\pi_\theta$ 越接近 $\pi_{\text{ref}}$，k1 的信噪比越差</strong>，而”接近 ref”恰恰是 RL 训练绝大部分时间所处的状态。所以如果用 k1 单样本值去画监控曲线——画出来的可能基本是噪声。</p>
+
+<p>（顺带一提：这个”信噪比随 KL 变小而变差”的规律，本身就说明了 k2/k3 这类方差缩减手段的必要性不是可有可无的工程优化，而是刚需。）</p>
+
+<h3 id="k2把它掰成非负的">k2：把它掰成非负的</h3>
+
+<p>$$k_2(y) = \frac{1}{2}\left(\log s(y)\right)^2$$</p>
+
+<p>平方一下就非负了。代价是<strong>它对 KL 有偏</strong>。</p>
+
+<p>但这个偏有多大？把 k1 和 k2 在 $s=1$ 附近做二阶 Taylor 展开：</p>
+
+<p>$$k_1 \approx (1-s) + \tfrac{1}{2}(s-1)^2, \qquad k_2 \approx \tfrac{1}{2}(s-1)^2$$</p>
+
+<p>两者只差一个线性项 $(1-s)$，而这一项的期望恰好是 0（因为 $\mathbb{E}[s]=1$）。所以 <strong>k2 的偏差是三阶小量</strong>——当 $\pi_\theta \approx \pi_{\text{ref}}$ 时可以忽略。数值上：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th>真实 KL</th>
+      <th>E[k2]</th>
+      <th>相对偏差</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0.1921</td>
+      <td>0.2255</td>
+      <td>+17%</td>
+    </tr>
+    <tr>
+      <td>0.0197</td>
+      <td>0.0202</td>
+      <td>+2.4%</td>
+    </tr>
+    <tr>
+      <td>0.0011</td>
+      <td>0.00113</td>
+      <td>&lt;0.5%</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>所以 k2 的定位很清楚：<strong>近距离下的低方差近似</strong>。KL 大到 0.2 那个量级时，它会系统性高估 17%，这时候你不该再信它的绝对值。</p>
+
+<h3 id="k3控制变量法">k3：控制变量法</h3>
+
+<p>k3 的思路更漂亮一点。既然 k1 无偏但方差大，那就给它<strong>加一个期望为 0 的项</strong>来降方差——这是统计里标准的控制变量（control variate）技巧：</p>
+
+<p>$$k_3(y) = k_1(y) + \lambda\,(s(y)-1) = -\log s(y) + \lambda\,(s(y)-1)$$</p>
+
+<p>$\mathbb{E}[s-1]=0$，所以<strong>无论 $\lambda$ 取多少，k3 都是 KL 的无偏估计</strong>。而只要 $(s-1)$ 和 $k_1$ 负相关，就能降方差。</p>
+
+<p>取 $\lambda=1$，理由不是方差最优，而是<strong>保证非负</strong>：由 $\log x \le x-1$ 可得 $k_3 = s - 1 - \log s \ge 0$。</p>
+
+<p>这里有个细节值得提：$\lambda=1$ 到底离方差最优有多远？理论上最优 $\lambda^\star = -\mathrm{Cov}(k_1, s-1)/\mathrm{Var}(s-1)$。我数值算了一下：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th>真实 KL</th>
+      <th>$\lambda^\star$</th>
+      <th>sd(k3, λ=1)</th>
+      <th>sd(k3, λ*)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0.1921</td>
+      <td>0.846</td>
+      <td>0.3270</td>
+      <td>0.3105</td>
+    </tr>
+    <tr>
+      <td>0.0197</td>
+      <td>1.015</td>
+      <td>0.01846</td>
+      <td>0.01823</td>
+    </tr>
+    <tr>
+      <td>0.00018</td>
+      <td>0.995</td>
+      <td>0.000300</td>
+      <td>0.000280</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>当两个分布接近时 $\lambda^\star \to 1$</strong>，也就是说 Schulman 为了非负性选的 $\lambda=1$ 恰好几乎就是方差最优的。这不是巧合——在 $s\to1$ 的极限下这两个诉求会合流。这大概是 k3 之所以好用的深层原因：它同时满足了非负、无偏、近似方差最优三件事。</p>
+
+<h3 id="小结这一节">小结这一节</h3>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th> </th>
+      <th>对 KL 值</th>
+      <th>非负</th>
+      <th>方差</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>k1</td>
+      <td><strong>无偏</strong></td>
+      <td>否</td>
+      <td>很大</td>
+    </tr>
+    <tr>
+      <td>k2</td>
+      <td>有偏（三阶小）</td>
+      <td>是</td>
+      <td>小</td>
+    </tr>
+    <tr>
+      <td>k3</td>
+      <td><strong>无偏</strong></td>
+      <td>是（λ=1）</td>
+      <td>小，近似最优</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>看到这张表，任何人的第一反应都是：<strong>k3 全面占优，用 k3 就完了</strong>。事实上业界也是这么做的——很多框架的 GRPO 干脆只实现了 k3。</p>
+
+<p><strong>但这张表只回答了”值”的问题。一旦进入梯度，结论会整个翻过来。</strong></p>
+
+<hr />
+
+<h2 id="二唯一需要记住的那个公式梯度有两项">二、唯一需要记住的那个公式：梯度有两项</h2>
+
+<p>这是整篇文章的技术核心，理解了它，后面所有结论都是推论。</p>
+
+<p>把 KL 估计项统一记作 $f_\theta(y)$（k1/k2/k3 都可以代进去）。注意 <strong>$f$ 的下标 $\theta$ 和采样分布的 $\theta$ 是同一个 $\theta$</strong>——这是全部麻烦的来源。</p>
+
+<p>$$\hat D_{\text{KL}} = \mathbb{E}_{y\sim\pi_\theta}[f_\theta(y)] = \sum_y \pi_\theta(y|x)\, f_\theta(y)$$</p>
+
+<p>求和号里<strong>有两处依赖 $\theta$</strong>。所以求导要用乘积法则：</p>
+
+<p>$$\nabla_\theta \hat D_{\text{KL}} = \mathbb{E}_{y\sim\pi_\theta}\Big[\underbrace{f_\theta(y)\,\nabla_\theta \log \pi_\theta(y|x)}_{\text{得分函数导数 (score function)}} + \underbrace{\nabla_\theta f_\theta(y)}_{\text{路径导数 (pathwise)}}\Big]$$</p>
+
+<p>（第二个等号用了对数技巧 $\nabla_\theta \pi_\theta = \pi_\theta \nabla_\theta\log\pi_\theta$。）</p>
+
+<p>这两项的物理含义完全不同，值得掰开说：</p>
+
+<ul>
+  <li><strong>得分函数项</strong>：$\theta$ 变了 → <strong>采到的 $y$ 的分布变了</strong> → KL 变了。这是”我少生成一点 KL 高的序列”。</li>
+  <li><strong>路径导数项</strong>：$\theta$ 变了 → <strong>同一个 $y$ 上 KL 的数值变了</strong> → KL 变了。这是”对于我已经生成的这条序列，我把它的 log prob 往 ref 拉”。</li>
+</ul>
+
+<p><strong>真正的 KL 梯度必须两项都有。</strong> 这就是”正确形式”。</p>
+
+<p>而现实是——<strong>没有任何主流实现两项都算</strong>。所有实现都只算其中一项。哪一项被丢掉，取决于你在哪里 stop-gradient。</p>
+
+<hr />
+
+<h2 id="三两种放法其实是两种-stop-gradient">三、两种放法，其实是两种 stop-gradient</h2>
+
+<p>加了 KL 正则的目标函数，<strong>正确</strong>的写法是（用红色标记需要回传梯度的 $\theta$）：</p>
+
+<p>$$J(\textcolor{red}{\theta}) = \mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}[r(x,y)] - \beta\,\mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}\left[\log\frac{\pi_{\textcolor{red}{\theta}}(y|x)}{\pi_{\text{ref}}(y|x)}\right]$$</p>
+
+<p>注意 KL 项里<strong>采样分布的 $\theta$ 和 log 里的 $\theta$ 都要回传梯度</strong>。</p>
+
+<p>但工程上，实际跑的永远是下面两个变体之一：</p>
+
+<p><strong>KL in Reward（IR，OpenAI/InstructGPT 路线）</strong></p>
+
+<p>$$J_{\text{IR}}(\textcolor{red}{\theta}) = \mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}[r] - \beta\,\mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}\left[\log\frac{\pi_{\theta}(y|x)}{\pi_{\text{ref}}(y|x)}\right]$$</p>
+
+<p>log 项里的 $\theta$ <strong>没有</strong>标红——它被 stop-grad 了。实现上就是把 KL 当成一个数值塞进 reward：</p>
+
+<p>$$r_t' = r_t - \beta\log\frac{\pi_\theta(y_t|s_t)}{\pi_{\text{ref}}(y_t|s_t)}$$</p>
+
+<p><code class="language-plaintext highlighter-rouge">trl</code> 的 PPO 里这段整个包在 <code class="language-plaintext highlighter-rouge">torch.no_grad()</code> 里，非常直白：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="nf">no_grad</span><span class="p">():</span>
+    <span class="n">logr</span> <span class="o">=</span> <span class="n">ref_logprobs</span> <span class="o">-</span> <span class="n">logprobs</span>
+    <span class="n">kl</span> <span class="o">=</span> <span class="o">-</span><span class="n">logr</span> <span class="k">if</span> <span class="n">args</span><span class="p">.</span><span class="n">kl_estimator</span> <span class="o">==</span> <span class="sh">"</span><span class="s">k1</span><span class="sh">"</span> <span class="nf">else </span><span class="p">(</span><span class="n">logr</span><span class="p">.</span><span class="nf">exp</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">logr</span>   <span class="c1"># else 分支是 k3
+</span>    <span class="n">non_score_reward</span> <span class="o">=</span> <span class="o">-</span><span class="n">args</span><span class="p">.</span><span class="n">kl_coef</span> <span class="o">*</span> <span class="n">kl</span>
+    <span class="n">rewards</span> <span class="o">=</span> <span class="n">non_score_reward</span><span class="p">.</span><span class="nf">clone</span><span class="p">()</span>
+    <span class="n">rewards</span><span class="p">[</span><span class="n">actual_start</span><span class="p">,</span> <span class="n">actual_end</span><span class="p">]</span> <span class="o">+=</span> <span class="n">scores</span>
+</code></pre></div></div>
+
+<p><strong>IR = 丢掉路径导数，只保留得分函数导数。</strong></p>
+
+<p><strong>KL in Loss（IL，DeepSeek/GRPO 路线）</strong></p>
+
+<p>$$J_{\text{IL}}(\textcolor{red}{\theta}) = \mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}[r] - \beta\,\mathbb{E}_{y\sim\pi_{\theta}}\left[\log\frac{\pi_{\textcolor{red}{\theta}}(y|x)}{\pi_{\text{ref}}(y|x)}\right]$$</p>
+
+<p>这次是<strong>采样分布</strong>的 $\theta$ 被 stop-grad 了（实现上体现为：KL 项直接作为一个 loss 加进去，不经过 advantage / policy gradient 通道）。</p>
+
+<p><strong>IL = 丢掉得分函数导数，只保留路径导数。</strong></p>
+
+<p>所以，回到题目里的那个问题——<strong>实现细节（是否 stop-gradient 某一项）会不会改变有偏性结论？</strong></p>
+
+<p><strong>答案是：它就是有偏性结论本身。</strong> IR 和 IL 的全部区别就是 stop-grad 打在哪儿；而 stop-grad 打在哪儿，决定了两项梯度里哪一项被丢。</p>
+
+<hr />
+
+<h2 id="四六宫格3-个估计器--2-种放法">四、六宫格：3 个估计器 × 2 种放法</h2>
+
+<p>现在把 k1/k2/k3 分别代进 IR 和 IL，逐格算。我把结论先摆出来，再讲推导：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th> </th>
+      <th><strong>KL in Reward</strong>（丢路径导数）</th>
+      <th><strong>KL in Loss</strong>（丢得分函数导数）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>k1</strong></td>
+      <td>✅ <strong>梯度无偏（精确等于真梯度）</strong></td>
+      <td>❌ 梯度恒等于 0，纯噪声</td>
+    </tr>
+    <tr>
+      <td><strong>k2</strong></td>
+      <td>❌ 正则塌陷</td>
+      <td>✅ <strong>梯度无偏（精确等于真梯度）</strong></td>
+    </tr>
+    <tr>
+      <td><strong>k3</strong></td>
+      <td>❌ 正则塌陷</td>
+      <td>⚠️ 精确的<strong>正向</strong> KL 梯度</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>这张表的<strong>反直觉之处</strong>在于：k1 和 k2 的角色是<strong>完全对调</strong>的。值上无偏的 k1，只在 reward 里对；值上有偏的 k2，只在 loss 里对。而值上”全面占优”的 k3，<strong>两边都不是我们想要的反向 KL 梯度</strong>。<code class="language-plaintext highlighter-rouge">verl</code> 甚至专门提供了 k3+ 版本，前向算 k3 的值（非负、低方差，报出去当监控数值），反向传播时却换成 k2 的梯度——本质上就是拿”这一格的问题”当作一个已知坑主动绕开：数值走 k3，梯度走 k2-IL（等于 4.3 那个恒等式），两头都占。</p>
+
+<p>但要强调一点，也是我后来才想明白的：<strong>表里的 ❌ 和 ⚠️ 严重程度差了两个数量级，而且方向相反。</strong></p>
+
+<ul>
+  <li>❌ 那几格是<strong>失效</strong>：k1-IL 梯度恒为 0，k2/k3-IR 的梯度在 $\pi_\theta\to\pi_{\text{ref}}$ 时会塌陷到真梯度的 1% 以下（4.4 会算给你看）。你以为加了正则，其实没加。</li>
+  <li>⚠️ 那格是<strong>换了个散度</strong>：k3-IL 不是”算歪了的反向 KL”，它精确地是<strong>正向 KL 的梯度</strong>。而正向 KL 本身就是个合法且好用的正则化目标（只是 mass-covering，跟我们设计初心的 mode-seeking 方向不同）。</li>
+</ul>
+
+<p>这个区分很重要，因为它解释了一个否则很难理解的现象：<strong>既然 k3 两边都不是真梯度，为什么业界还是普遍在用它？</strong> 答案是大家用的是 ⚠️ 那格（GRPO 系走的都是 IL），而那一格实践上站得住。真正的坑是 ❌ 那几格。</p>
+
+<h3 id="41-为什么-k1-in-reward-是精确无偏的">4.1 为什么 k1-in-Reward 是精确无偏的</h3>
+
+<p>IR 丢掉了路径导数，看起来一定错。但对 k1：</p>
+
+<p>$$\nabla_\theta f_\theta(y) = \nabla_\theta \log\frac{\pi_\theta(y|x)}{\pi_{\text{ref}}(y|x)} = \nabla_\theta\log\pi_\theta(y|x)$$</p>
+
+<p>（$\pi_{\text{ref}}$ 与 $\theta$ 无关，直接消失。）而这一项的期望<strong>恒为 0</strong>：</p>
+
+<p>$$\mathbb{E}_{y\sim\pi_\theta}[\nabla_\theta f_\theta(y)]=\mathbb{E}_{y\sim\pi_\theta}[\nabla_\theta\log\pi_\theta(y|x)] = \sum_y \nabla_\theta \pi_\theta(y|x) = \nabla_\theta \sum_y \pi_\theta(y|x) = \nabla_\theta 1 = 0$$</p>
+
+<p><strong>丢掉的东西期望为 0，所以什么都没丢。</strong> k1-IR 的梯度和完整正确梯度<strong>完全一致</strong>，不是近似，是恒等。</p>
+
+<p>这带来一个很有用的推论：对 k1 而言，log 项里的 $\theta$ 要不要 stop-grad，<strong>梯度形式一模一样</strong>：</p>
+
+<p>$$\nabla_\theta \mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}\left[\log\frac{\pi_{\theta}}{\pi_{\text{ref}}}\right] = \nabla_\theta \mathbb{E}_{y\sim\pi_{\textcolor{red}{\theta}}}\left[\log\frac{\pi_{\textcolor{red}{\theta}}}{\pi_{\text{ref}}}\right] = \mathbb{E}\left[\log\frac{\pi_\theta}{\pi_{\text{ref}}}\nabla_\theta\log\pi_{\textcolor{red}\theta}\right]$$</p>
+
+<p><strong>k1 对 stop-grad 免疫。</strong> 这个鲁棒性本身就是一个很强的工程优点——它意味着这条路径上少一个可以写错的地方。</p>
+
+<h3 id="42-为什么-k1-in-loss-是纯噪声">4.2 为什么 k1-in-Loss 是纯噪声</h3>
+
+<p>同一个事实，换个位置，结论就反过来了。IL 保留的<strong>恰好就是</strong>那个期望为 0 的路径导数项：</p>
+
+<p>$$\nabla_\theta \mathbb{E}_{y\sim\pi_\theta}\left[\log\frac{\pi_{\textcolor{red}\theta}}{\pi_{\text{ref}}}\right] = \mathbb{E}_{y\sim\pi_\theta}[\nabla_\theta\log\pi_{\textcolor{red}\theta}] = 0$$</p>
+
+<p><strong>k1-in-Loss 的梯度期望恒为 0。</strong> 它不是”有偏”——它是<strong>根本没有正则化作用</strong>。你以为你在约束模型不要偏离 ref，实际上你只是往梯度里注入了一坨均值为 0 的噪声。它唯一的效果是增大梯度方差。</p>
+
+<p>这大概是六宫格里最危险的一格：<strong>它不报错，loss 曲线看起来也正常，但它什么都没做。</strong></p>
+
+<h3 id="43-为什么-k2-in-loss-反而是对的">4.3 为什么 k2-in-Loss 反而是对的</h3>
+
+<p>k2 的路径导数：</p>
+
+<p>$$\nabla_\theta f_\theta(y)=\nabla_\theta \tfrac{1}{2}(\log s)^2 = \log s \cdot \nabla_\theta \log s = -\log s \cdot \nabla_\theta\log\pi_{\textcolor{red}\theta} = \log\frac{\pi_\theta}{\pi_{\text{ref}}}\nabla_\theta\log\pi_{\textcolor{red}\theta}$$</p>
+
+<p>对比 4.1 的结果——<strong>这和 k1-IR 的梯度一字不差</strong>。</p>
+
+<p>$$\boxed{\text{k2-in-Loss} \equiv \text{k1-in-Reward}}$$</p>
+
+<p>这个恒等式非常值得记住。它说明：k2 那个”多出来”的平方，作用不是改变 KL 的值，而是<strong>把 KL 的值当成系数塞进路径导数里，从而人工复现出得分函数项</strong>。<strong>k2 在值上的有偏，换来了梯度上的精确无偏。</strong></p>
+
+<p>也就是说，<strong>“k2 是有偏估计器”这句话，在梯度语境下是彻底的误导。</strong></p>
+
+<h3 id="44-k3-两边都不是真梯度但两边错得完全不一样">4.4 k3 两边都不是真梯度——但两边错得完全不一样</h3>
+
+<p>k3（λ=1）的路径导数：</p>
+
+<p>$$\nabla_\theta\,\mathbb{E}[s - \log s - 1] = \mathbb{E}\left[\left(1 - \frac{\pi_{\text{ref}}}{\pi_\theta}\right)\nabla_\theta\log\pi_{\textcolor{red}\theta}\right] = \mathbb{E}\left[-(s-1)\,\nabla_\theta\log\pi_{\textcolor{red}\theta}\right]$$</p>
+
+<p>对比 k2-IL（正确）的系数 $-\log s$，k3-IL 的系数是 $-(s-1)$。两者在 $s\to 1$ 时一致，但在远处会分道扬镳：</p>
+
+<ul>
+  <li>$\pi_\theta \gg \pi_{\text{ref}}$（$s\to 0$）：正确系数 $-\log s \to +\infty$，强烈惩罚；k3 的系数只趋于 $1$，<strong>惩罚不足</strong>。</li>
+  <li>$\pi_\theta \ll \pi_{\text{ref}}$（$s\to\infty$）：正确系数以 $\log$ 增长，k3 的系数<strong>线性增长</strong>，更激进。</li>
+</ul>
+
+<p>不过，把这些系数差异说成”k3-IL 是个粗糙近似”其实没抓到点子上。上面那个期望有一个精确的身份。注意 $\mathbb{E}[\nabla_\theta\log\pi_\theta]=0$，所以</p>
+
+<p>$$\mathbb{E}\left[-(s-1)\nabla_\theta\log\pi_\theta\right] = -\mathbb{E}\left[s\,\nabla_\theta\log\pi_\theta\right] = -\sum_y \pi_{\text{ref}}\,\nabla_\theta\log\pi_\theta = \nabla_\theta D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta)$$</p>
+
+<p>也就是：</p>
+
+<p>$$\boxed{\nabla_\theta\big[\text{k3-in-Loss}\big] = \nabla_\theta D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta)}$$</p>
+
+<p>（数值验证残差 $\sim10^{-10}$，见附录 B。）</p>
+
+<p><strong>k3-in-Loss 不是”算歪了的反向 KL 梯度”，它是精确的正向 KL 梯度。</strong> 这是个完全不同性质的陈述——它不是在近似一个东西而近似歪了，它是在<strong>精确地优化另一个东西</strong>。</p>
+
+<p>这也是 GRPO 原始论文（DeepSeekMath）里那个 k3 loss 项真正的问题所在：写下 $\beta\cdot k_3(y;\theta)$ 直接反传的人，本意显然是要用反向 KL 拴住模型（这是全文开头就讲清楚的设计初心），但代码算出来的却是正向 KL 的梯度——<strong>不是大小错了，是方向错了</strong>。第五节会看到，这个”方向错误”的根源和”能不能补救”，其实跟采样是不是 on-policy 密切相关，第六节会专门展开。</p>
+
+<p>所以 k3-IL 至少在 on-policy、$\pi_\theta\approx\pi_{\text{ref}}$ 的区间里是个<strong>可用</strong>的选择，只是你应该知道自己在正则哪个散度。它跟 k1-IL（梯度恒为 0，什么都没做）完全不是一个错误等级。</p>
+
+<h4 id="真正的坑k3-in-reward">真正的坑：k3-in-Reward</h4>
+
+<p>k3-IR 的梯度是 $\mathbb{E}[k_3 \nabla_\theta\log\pi_\theta]$，比正确梯度 $\mathbb{E}[k_1\nabla_\theta\log\pi_\theta]$ 多了一项 $\lambda\,\mathbb{E}[(s-1)\nabla_\theta\log\pi_\theta]$。而这一项我们刚刚才算过——它正是 $\nabla_\theta D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta)$。所以（取 $\lambda=1$）：</p>
+
+<p>$$\boxed{\nabla_\theta \big[\text{k3-in-Reward}\big] = \underbrace{\nabla_\theta D_{\text{KL}}(\pi_\theta\|\pi_{\text{ref}})}_{\text{反向 KL 梯度，我们想要的}} - \underbrace{\nabla_\theta D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta)}_{\text{正向 KL 梯度，混进来的}}}$$</p>
+
+<p>（我数值验证过，误差 $\sim 10^{-10}$，见附录。）</p>
+
+<p>这个式子有两个推论，第二个尤其重要：</p>
+
+<p><strong>推论 1：k3-IR 想给的是反向 KL 的梯度，但额外混入了一个符号相反的正向 KL 梯度项。</strong> 它不是”带噪声的正则化”，噪声是零均值的，这个混入项不是——它是一个系统性的、方向相反的干扰项。</p>
+
+<p><strong>推论 2（更要命的）：在 $\pi_\theta\approx\pi_{\text{ref}}$ 时，这两项会一阶抵消。</strong> 因为在小扰动下正向和反向 KL 都近似等于 $\frac{1}{2}\Delta^\top F \Delta$（$F$ 是 Fisher 信息矩阵），二者到二阶为止是<strong>相等的</strong>，梯度也就相互抵消了。</p>
+
+<p>换个角度看更直观：k3-IR 的梯度系数是 $k_3 = s-1-\log s \approx \frac{1}{2}(s-1)^2$，是<strong>二阶小量</strong>；而正确系数 $k_1 = -\log s \approx (1-s)$ 是<strong>一阶小量</strong>。差了整整一阶。</p>
+
+<p>数值上这个效应非常剧烈：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th>$\Vert\pi_\theta - \pi_{\text{ref}}\Vert$</th>
+      <th>真梯度模长</th>
+      <th>k3-IR 梯度模长</th>
+      <th>比例</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>大</td>
+      <td>1.76e-1</td>
+      <td>3.04e-2</td>
+      <td>17%</td>
+    </tr>
+    <tr>
+      <td>中</td>
+      <td>1.01e-1</td>
+      <td>2.82e-2</td>
+      <td>28%</td>
+    </tr>
+    <tr>
+      <td>小</td>
+      <td>1.52e-2</td>
+      <td>7.54e-4</td>
+      <td>5.0%</td>
+    </tr>
+    <tr>
+      <td>很小</td>
+      <td>3.03e-2</td>
+      <td>2.25e-4</td>
+      <td><strong>0.74%</strong></td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p><strong>所以 k3-in-Reward 的问题不是”有点偏”，而是”在你最需要它工作的区间里，它几乎不产生任何正则化梯度”。</strong></p>
+
+<p>这解释了一个很多人踩过但没想明白的现象：<em>明明加了 KL 惩罚、监控面板上 KL 数值也算得挺准（k3 值确实无偏！），但模型该漂还是漂。</em> 因为值算对了，梯度是空的。</p>
+
+<p>（k2-in-Reward 有完全相同的病理，原因一样：k2 的系数也是二阶小量。看数值表里 k2_IR 的模长和 k3_IR 几乎一样小。）</p>
+
+<h4 id="把-ir-和-il-并排放同一个-07相反的含义">把 IR 和 IL 并排放：同一个 0.7%，相反的含义</h4>
+
+<p>k3 的两格现在都有了精确身份，放在一起看非常有意思：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th> </th>
+      <th>精确身份</th>
+      <th>$\pi_\theta\to\pi_{\text{ref}}$ 时</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>k3-<strong>IL</strong></td>
+      <td>$\nabla D_{\text{KL}}(\pi_{\text{ref}}\Vert\pi_\theta)$（正向 KL 梯度）</td>
+      <td>相对真梯度（反向 KL 梯度）误差 → <strong>0.63%</strong>（几乎完美）</td>
+    </tr>
+    <tr>
+      <td>k3-<strong>IR</strong></td>
+      <td>$\nabla D_{\text{KL}}(\pi_\theta\Vert\pi_{\text{ref}}) - \nabla D_{\text{KL}}(\pi_{\text{ref}}\Vert\pi_\theta)$（反向 − 正向）</td>
+      <td>梯度模长 → 真梯度的 <strong>0.74%</strong>（几乎为零）</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>两个都是 0.7% 量级的数字，含义却完全相反：<strong>IL 是”只差 0.6%”，IR 是”只剩 0.7%”。</strong></p>
+
+<p>根源就是那个减号。IL 保留的是单个正向 KL 梯度——一个一阶量，恰好在 $\pi_\theta\approx\pi_{\text{ref}}$ 处跟反向 KL 梯度几乎重合；IR 保留的是反向、正向两个 KL 梯度<strong>相减</strong>——一阶部分抵消掉，只剩二阶残渣。</p>
+
+<p><strong>同一个估计器，换个位置，从”几乎完美”变成”几乎为零”。</strong> 这大概是全文最能说明”有偏性是组合的属性、不是估计器的属性”的一个例子。</p>
+
+<hr />
+
+<h2 id="五token-level-的坑那个所有人都漏掉的-part-2">五、Token-level 的坑：那个所有人都漏掉的 Part 2</h2>
+
+<p>到这里为止的推导都是 sequence-level 的。但实现是 token-level 的，而<strong>这中间会掉东西</strong>。</p>
+
+<p>把 k1 的正确梯度展开成 token 形式：</p>
+
+<p>$$
+\begin{aligned}
+\nabla_\theta \hat D_{\text{KL}}
+&= \mathbb{E}\left[\sum_{t=1}^T \nabla_\theta\log\pi_\theta(y_t|s_t)\sum_{n=t}^{T}\log\frac{\pi_\theta(y_n|s_n)}{\pi_{\text{ref}}(y_n|s_n)}\right] \\
+&= \underbrace{\mathbb{E}\left[\sum_t \nabla_\theta\log\pi_\theta(y_t|s_t)\cdot\log\frac{\pi_\theta(y_t|s_t)}{\pi_{\text{ref}}(y_t|s_t)}\right]}_{\text{Part 1：当前 token 自己的 KL}} + \underbrace{\mathbb{E}\left[\sum_t \nabla_\theta\log\pi_\theta(y_t|s_t)\cdot\sum_{n=t+1}^{T}\log\frac{\pi_\theta(y_n|s_n)}{\pi_{\text{ref}}(y_n|s_n)}\right]}_{\text{Part 2：后续 token 的 KL}}
+\end{aligned}
+$$</p>
+
+<p>（中间那步 $\sum_{n=1}^T \to \sum_{n=t}^T$ 用的是 policy gradient 的 reward-to-go 结论。）</p>
+
+<p><strong>而几乎所有框架的 token-level KL-in-Loss 实现，只算了 Part 1。</strong></p>
+
+<p>Part 2 的含义是：<em>我现在选这个 token，会把后续生成引导到什么样的状态上去，那些状态的 KL 是高是低。</em> 漏掉它，等于在优化时<strong>完全忽略了当前 token 对后续 KL 惩罚的级联影响</strong>——KL 正则从一个序列级的约束退化成了一个<strong>逐 token 的局部近似</strong>。</p>
+
+<p>这一条的杀伤力在于：<strong>它把 4.3 那个漂亮的结论作废了。</strong> k2-in-Loss 在 sequence-level 上是精确无偏的，但一旦按主流方式做 token-level 实现，Part 2 一丢，它<strong>在实现层面重新变回有偏</strong>。</p>
+
+<p>所以六宫格要再补一列：</p>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th> </th>
+      <th>IR</th>
+      <th>IL (sequence, 理论)</th>
+      <th>IL (token, 主流实现)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>k1</td>
+      <td>✅ 精确</td>
+      <td>❌ 恒为 0</td>
+      <td>❌ 恒为 0</td>
+    </tr>
+    <tr>
+      <td>k2</td>
+      <td>❌ 有偏</td>
+      <td>✅ 精确</td>
+      <td>❌ <strong>有偏（漏 Part 2）</strong></td>
+    </tr>
+    <tr>
+      <td>k3</td>
+      <td>❌ 有偏</td>
+      <td>❌ 有偏</td>
+      <td>❌ 有偏</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>而 <strong>IR 没有这个问题</strong>——因为 IR 是把 KL 塞进 reward，然后走标准的 policy gradient / advantage 通道，reward-to-go 的累加是 PPO 框架<strong>天然就帮你做了</strong>的。Part 2 在 IR 里是自动包含的。</p>
+
+<p>这是 IR 一个被严重低估的结构性优势：<strong>它不改变优化机制，只改变 reward 数值。</strong> 所有 policy gradient 的正确性结论（reward-to-go、advantage、baseline 降方差）原封不动继承。你想不出错都难。</p>
+
+<hr />
+
+<h2 id="六off-policy-这一层">六、Off-policy 这一层</h2>
+
+<p>前面五节的推导有一个隐藏前提：$y\sim\pi_\theta$，即数据是当前策略自己采出来的。但 PPO/GRPO 实际是 off-policy 的——数据由 $\pi_{\text{old}}$（行为策略，可能是上一轮的 $\pi_\theta$，也可能是切了 mini-batch 之后过时的版本）采出，更新的却是 $\pi_\theta$。标准 PPO 对 reward 项有 importance sampling 比值 $\rho_t=\pi_\theta/\pi_{\text{old}}$，但<strong>KL 项通常没有</strong>——这是一个几乎所有框架都存在的不一致，而且它比”没做 IS”看起来的样子更隐蔽。</p>
+
+<h3 id="61-统一记号把-is-权重也代进梯度里">6.1 统一记号：把 IS 权重也代进梯度里</h3>
+
+<p>为了把 on-policy 和 off-policy 放进同一个框架，定义</p>
+
+<p>$$\rho(y) = \frac{\pi_\theta(y|x)}{\text{sg}(\pi_{\text{old}}(y|x))}$$</p>
+
+<p>$\pi_{\text{old}}$ 不含 $\theta$，天然 stop-grad。关键的地方在于：<strong>on-policy（$\pi_{\text{old}}=\pi_\theta$）时 $\rho\equiv1$ 这件事只是个数值上的巧合，不是梯度上的。</strong></p>
+
+<p>$$\nabla_\theta \rho(y) = \nabla_\theta\frac{\pi_\theta(y)}{\pi_{\text{old}}(y)} = \rho(y)\,\nabla_\theta\log\pi_\theta(y) = \rho(y)\,s_\theta(y)$$</p>
+
+<p>代入 on-policy 极限 $\rho=1$，得到 $\nabla_\theta\rho = s_\theta(y) \neq 0$。<strong>$\rho$ 的值恒为 1，但它的梯度不是 0。</strong> 这和第二节”KL 梯度必须包含路径导数”是同一个陷阱的另一种形式——只是这次藏在一个看起来像常数的量里。任何直接对 $\rho\cdot k(y)$ 反传、却把 $\rho$ 当常数处理的实现，都会漏掉 $k(y)\cdot\nabla_\theta\rho = k(y)\,\rho\,s_\theta$ 这一项。</p>
+
+<h3 id="62-这正是-grpo-原始-k3-loss-的-bug-根源">6.2 这正是 GRPO 原始 k3-loss 的 bug 根源</h3>
+
+<p>回头看 4.4：$\nabla_\theta[\text{k3-in-Loss}] = \nabla_\theta D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta)$（正向 KL 梯度，方向错了）。现在可以把这个结果重新理解一遍：GRPO 原始论文的写法是直接对 $k_3(y;\theta)$ 反传，<strong>完全没有 $\rho$</strong>——因为大家觉得”反正是 on-policy，$\rho\equiv1$，乘不乘无所谓”。但根据 6.1，这个想法本身就是错的：即使 on-policy，完整的梯度也应该是 $\nabla_\theta[\rho\cdot k_3]$，而不是 $\rho\cdot\nabla_\theta k_3$。丢掉的正是 $k_3\cdot\nabla_\theta\rho = k_3\cdot s_\theta$ 这一项。</p>
+
+<p>补上这一项会发生什么？用乘积法则展开 $\nabla_\theta[\rho k_3]$（$s(y)=\pi_{\text{ref}}/\pi_\theta$，$\nabla_\theta k_3 = (1-s)s_\theta$，$\nabla_\theta\rho=\rho s_\theta$）：</p>
+
+<p>$$\nabla_\theta[\rho k_3] = k_3\cdot\rho s_\theta + \rho\cdot(1-s)s_\theta = \rho s_\theta\big[\underbrace{(s-1-\log s)}_{k_3} + 1 - s\big] = \rho s_\theta\cdot(-\log s) = \rho\, s_\theta\, k_1$$</p>
+
+<p>漏掉的那一项和保留的那一项恰好凑成了 $k_1$。也就是说，<strong>完整的 $\rho k_3$ 恰好精确等于 $\rho\, s_\theta\, k_1$</strong>——这正是（把 $\rho$ 换成 IS 权重之后的）反向 KL 的得分函数梯度。我数值验证过这条恒等式，逐样本残差在浮点精度以内，不是期望意义上的近似。</p>
+
+<p>同样的展开对 $\text{sg}(\rho)\cdot k_2$（$\rho$ 当常数、只对 $k_2$ 反传）也成立：$\nabla_\theta k_2 = k_1 s_\theta$，所以 $\nabla_\theta[\text{sg}(\rho)k_2] = \rho\cdot k_1 s_\theta$——<strong>和完整的 $\rho k_3$ 逐样本完全相同</strong>，不只是期望相同，是同一个随机变量：</p>
+
+<p>$$\boxed{\nabla_\theta\big[\text{sg}(\rho)\cdot k_2\big] \equiv \nabla_\theta\big[\rho\cdot k_3\big] = \rho(y)\,s_\theta(y)\,k_1(y)}$$</p>
+
+<p>数值验证（6 类分布，$\pi_{\text{old}}$ 和 $\pi_\theta$ 显式不同）：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>E_old[rho*s*(k1+1)]      与真反向KL梯度误差 = 1.2e-10
+E_old[sg(rho)*grad k2]   与真反向KL梯度误差 = 1.2e-10
+E_old[rho*grad k3]       与真反向KL梯度误差 = 1.2e-10
+sg(rho)*grad_k2 与 rho*grad_k3 的逐样本差   = 0.0  &lt;- 精确恒等，不是期望相等
+</code></pre></div></div>
+
+<p>三个东西（$\rho k_1$ 全量反传、$\text{sg}(\rho)k_2$、$\rho k_3$）都精确收敛到反向 KL 的真梯度，且后两者逐样本恒等。而<strong>去掉 $\rho$、直接反传裸 $k_3$</strong>（GRPO 原始写法），on-policy 极限下精确等于正向 KL 梯度（4.4 已证），off-policy 时则既不是正向也不是反向 KL 的梯度，就是一个 generic 的错误量——数值上离两者都更远。</p>
+
+<p>这也解释了 DeepSeek-V3.2 的修复为什么有效：它给 KL 估计器显式乘上 $\rho_t=\pi_\theta/\pi_{\text{old}}$，本质上就是把裸 $k_3$ 换成 $\rho k_3$——而这恰好是上面证明的、能精确复原反向 KL 梯度的形式。<strong>这不是”给 off-policy 加了个修正”那么简单，它同时也修好了 on-policy 场景下 GRPO 原始写法里那个被忽略的 $\nabla_\theta\rho$ 项。</strong></p>
+
+<p><img loading="lazy" decoding="async" src="/assets/img/blog/kl-divergence-code-snippet.webp" alt="KL 估计器 off-policy 修复的代码片段" style="display:block;margin:0 auto;width:95%;max-width:100%;" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if args.use_kl_loss:
+
+ref_log_probs = batch["ref_log_probs"]
+
+ref_log_probs = torch.cat(ref_log_probs, dim=0)
+
+importance_ratio = None
+
+if args.use_unbiased_kl:
+
+importance_ratio = torch.exp(log_probs - old_log_probs)
+
+kl = compute_approx_kl(
+
+log_probs,
+
+ref_log_probs,
+
+kl_loss_type=args.kl_loss_type,
+
+importance_ratio=importance_ratio,
+
+)
+
+kl_loss = sum_of_sample_mean(kl)
+
+
+
+loss = loss + args.kl_loss_coef * kl_loss
+</code></pre></div></div>
+
+<p>当然，第五节的坑还在：只要 token-level 展开仍然只算 Part 1，补了 $\rho$ 也换不回完整无偏——修了一个洞，另一个洞还在。</p>
+
+<h3 id="63-和-43-的呼应一个更大的恒等式家族">6.3 和 4.3 的呼应：一个更大的恒等式家族</h3>
+
+<p>上面这套 $\rho$ 记号还揭示了一件事：<strong>4.3 节的 $\text{k2-in-Loss}\equiv\text{k1-in-Reward}$，其实是这个 off-policy 恒等式在 $\rho\equiv1$ 时的特例。</strong> 把 $\rho=1$（on-policy）代入 $\text{sg}(\rho)k_2\equiv\rho k_3$，得到 $k_2$-loss $\equiv$ $k_3$-with-$\rho$-loss $= s_\theta k_1$——这正是 4.3 算出的 $\text{k1-in-Reward}$ 的梯度。也就是说，”$k_1$ 的得分函数梯度 $s_\theta k_1$”这个表达式，是三种写法（k1-IR、k2-IL、$\rho$k3-IL/sg($\rho$)k2-IL）共同的落脚点，区别只是从哪条路径到达它。</p>
+
+<p>反过来，这也告诉我们 <strong>loss 和 reward 两种放法，在样本级别可以给出完全相同的梯度随机变量</strong>，但整体更新语义仍有区别：</p>
+
+<ul>
+  <li><strong>是否经过 advantage / baseline</strong>：reward 里的 KL 项会被 GRPO/PPO 的 baseline 处理、可能被部分吸收进 advantage 的中心化里；loss 里的 KL 项是独立加的正则梯度，不受 baseline 影响。</li>
+  <li><strong>信用分配路径</strong>：loss 是逐 token 局部生效；reward 会随 return 沿时间线往前传播（这正是第五节 Part 2 的来源——reward-to-go 自动把后续的 KL 惨罚记到前面的 token 头上，loss 写法默认没有）。</li>
+</ul>
+
+<p>所以”梯度随机变量相同”不等于”训练效果相同”——这也是为什么本文一直强调要连着”放置位置”和”token 展开”一起看，单独讨论”哪个估计器无偏”永远是半个问题。</p>
+
+<h3 id="64-reward-shaping-下的-off-policy结论不变但要小心批内归一化">6.4 Reward Shaping 下的 Off-policy：结论不变，但要小心批内归一化</h3>
+
+<p>第四节证明的”只有 k1-IR 精确无偏”这个结论，off-policy 下要不要重新证一遍？其实不用。标准 PPO 的做法是把 IS 比值 $\rho_{\text{pg}}=\pi_\theta/\pi_{\text{old}}$ 乘在<strong>整条</strong>得分函数项上（reward 和折进 reward 里的 KL 一起乘），这个比值和”KL 估计器本身选哪个”“路径导数期望是否为零”是两件独立的事——k1 的路径导数恒为 0 这个论证全程没用到 on-policy 假设，off-policy 下继续成立。所以结论照搬：<strong>reward shaping 下 off-policy 也只有 k1 精确无偏，k2/k3 折进 reward 一样会带进那个符号相反的正向 KL 污染项。</strong></p>
+
+<p>唯一需要额外小心的是一个和 KL 估计器本身无关、但经常和它绑在一起出现的坑：<strong>GRPO 式的组内（group-relative）reward 归一化</strong>。如果对 shaped reward $r'=r-\beta k$ 做”减去批内均值再除以批内标准差”，且均值/方差的计算<strong>包含了当前这条样本自己</strong>，会引入 $O(1/n)$ 的系统性偏差（自己被自己的统计量除了一次）。这个偏差和 KL 估计器无偏与否叠加在一起，会让”我明明用了 k1-IR”却依然对不上手推结论。修法很直接：<strong>用 leave-one-out 的均值/方差</strong>（算统计量时去掉当前样本），既能保持严格无偏，又不损失方差缩减的效果。这条和 KL 本身的偏差无关，但因为归一化和 KL 项通常写在同一段代码里，经常被一起冤枉。</p>
+
+<hr />
+
+<h2 id="七真正能落地的-takeaway">七、真正能落地的 Takeaway</h2>
+
+<p>前面全是推导，这一节讲怎么用。先给一张速查表，后面再展开讲每一行的理由。</p>
+
+<h3 id="71-速查表">7.1 速查表</h3>
+
+<div class="table-responsive"><table class="table table-sm">
+  <thead>
+    <tr>
+      <th>场景</th>
+      <th>推荐写法</th>
+      <th>一句话理由</th>
+      <th>出处</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>On-policy，KL in Reward</td>
+      <td><strong>k1</strong></td>
+      <td>路径导数期望恒为 0，精确无偏，且对 stop-grad 免疫</td>
+      <td>§4.1</td>
+    </tr>
+    <tr>
+      <td>On-policy，KL in Loss</td>
+      <td><strong>k2</strong>；或显式写出 $\rho k_3$ / $\text{sg}(\rho)k_2$</td>
+      <td>k2-loss 精确等价于 k1-in-Reward；裸 k3-loss（不带 $\rho$）会退化成<strong>正向 KL</strong> 梯度，方向错了，不是大小错了</td>
+      <td>§4.3、§4.4、§6.2</td>
+    </tr>
+    <tr>
+      <td>Off-policy，KL in Reward</td>
+      <td><strong>k1</strong>，套标准 PPO 整条 IS 比值即可，KL 项不用再单独加权</td>
+      <td>k1 路径导数为零这个论证不依赖 on-policy 假设</td>
+      <td>§6.4</td>
+    </tr>
+    <tr>
+      <td>Off-policy，KL in Loss</td>
+      <td><strong>$\rho k_3$ 或 $\text{sg}(\rho)k_2$</strong>（逐样本恒等，选哪个纯看实现方便）</td>
+      <td>唯二能在 off-policy 下精确复原反向 KL 真梯度的写法；裸 $\rho k_1$ 虽也无偏但方差大得多</td>
+      <td>§6.1、§6.2</td>
+    </tr>
+    <tr>
+      <td>监控 / 画曲线 / early stop 判据</td>
+      <td><strong>k3</strong>（或算力够就上 full-vocab 精确 KL）</td>
+      <td>无偏 + 非负 + 低方差三者都要；和梯度走哪条路径完全独立</td>
+      <td>§7.4</td>
+    </tr>
+  </tbody>
+</table></div>
+
+<p>表里没写但必须记住的两条横切规则：<strong>token-level 实现要有 Part 2</strong>（§5，否则 loss 一列全部退化）；<strong>离 $\pi_{\text{ref}}$ 越远，表里所有”近似成立”的结论越不成立</strong>（§7.5）。</p>
+
+<h3 id="72-默认选择">7.2 默认选择</h3>
+
+<blockquote>
+  <p><strong>默认用 k1-in-Reward。</strong></p>
+</blockquote>
+
+<p>理由不是它数学上最优雅，而是它<strong>在工程上最难写错</strong>：</p>
+
+<ol>
+  <li>梯度精确无偏，不是近似；</li>
+  <li>对 stop-grad 免疫（4.1 的推论）——log 项包不包 <code class="language-plaintext highlighter-rouge">no_grad</code> 都一样，少一个出错点；</li>
+  <li>token-level 的 Part 2 由 PPO 的 reward-to-go 自动包含，不需要你手写；</li>
+  <li>不改变优化机制，advantage / baseline / value function 全部原样复用。</li>
+</ol>
+
+<p>k1 唯一的缺点是<strong>值的方差大</strong>，但注意——<strong>这个缺点在 IR 里被大幅稀释了</strong>：KL 是加进 reward 再过 advantage 和 baseline 的，PPO 的方差缩减机制本来就在处理这个。你不是拿单样本 k1 直接当梯度用。</p>
+
+<h3 id="73-如果你的框架只能-kl-in-loss">7.3 如果你的框架只能 KL-in-Loss</h3>
+
+<p>很多框架（GRPO 系）就是 in-loss 的，改不动。这里要分 on-policy 和 off-policy 两种情况——它们的正确答案不一样。</p>
+
+<p><strong>On-policy（$\pi_{\text{old}}=\pi_\theta$，或者干脆没有 $\pi_{\text{old}}$ 这个概念）：</strong></p>
+
+<ul>
+  <li><strong>绝对不要用 k1</strong>。它梯度期望为 0，等于没加正则还平白增加方差。这是最容易犯且最隐蔽的错。</li>
+  <li><strong>理论最优是 k2</strong>，它 sequence-level 精确等价于 k1-IR。</li>
+  <li><strong>如果直接用裸 k3 反传，要知道你在正则正向 KL，不是反向 KL</strong>（§4.4、§6.2）——除非你显式把 $\rho$（哪怕 on-policy 下 $\rho\equiv1$，见 §6.1）乘进去再反传，那样才会精确落回反向 KL 的梯度。</li>
+  <li><strong>如果能改实现，把 Part 2 补上</strong>——具体做法是让 token $t$ 的 KL 系数变成从 $t$ 到 $T$ 的 KL 累加（reward-to-go 形式），而不是只用 token $t$ 自己的 KL。这是把 IL 修对的唯一办法。</li>
+</ul>
+
+<p><strong>Off-policy（mini-batch 复用、$\pi_{\text{old}}\neq\pi_\theta$）：</strong></p>
+
+<ul>
+  <li><strong>用 $\rho k_3$ 或 $\text{sg}(\rho)k_2$</strong>（§6.2 已证逐样本恒等），两者都能精确复原反向 KL 的真梯度。裸 k3（不带 $\rho$）此时既不是反向也不是正向 KL 的梯度，纯粹是个 generic 的错误量，比 on-policy 下的”至少还是个正确的正向 KL 梯度”更糟。</li>
+  <li>DeepSeek-V3.2 的修复本质上就是把 GRPO 的裸 $k_3$-loss 换成 $\rho k_3$——这一步同时修好了”off-policy 没做 IS”和”on-policy 也漏掉 $\nabla_\theta\rho$”两个问题，虽然论文的表述强调的是前者。</li>
+</ul>
+
+<p>顺带回答一个自然的疑问：<strong>既然 k2 理论上最优，为什么框架默认给的都是 k3？</strong> 除了路径依赖（DeepSeekMath 的 GRPO 公式里写的就是 k3，后面全抄）之外，有两个不那么显然的实质理由：</p>
+
+<ul>
+  <li><strong>非负性在 loss 里是硬需求。</strong> $k_3\ge0$ 意味着优化器不可能靠”把 KL 项推成负数”来刷低 loss。k1 在 loss 里可以无限往负漂（尽管期望为 0），这在有限 batch 上是真实的失效模式。k2 虽然也非负，但它是平方项，对 outlier token（$\log s$ 很大的那些）的梯度响应比 k3 的线性响应更剧烈。</li>
+  <li><strong>无偏从来不是 RL 里的最高优先级。</strong> 无偏只是对无穷样本的承诺，有限 batch 下决定优化质量的是 MSE = 偏差² + 方差。k1 的方差是信号的几十上百倍，k3 只有 1.6 倍。<strong>用一点偏差换两个数量级的方差，几乎总是划算的。</strong>（<code class="language-plaintext highlighter-rouge">verl</code> 的 k3+ 实现——前向算 k3 的非负值当监控，反向换成 k2 的梯度——就是把”数值要 k3、梯度要 k2”这个诉求直接写进了框架里，参见 §4 六宫格下面的说明。）</li>
+</ul>
+
+<h3 id="74-值和梯度要分开选">7.4 值和梯度要分开选</h3>
+
+<p>这是我认为最有实操价值的一条，也是很多人没意识到的：</p>
+
+<blockquote>
+  <p><strong>监控用的 KL 和参与梯度的 KL，不必是同一个估计器。</strong></p>
+</blockquote>
+
+<ul>
+  <li><strong>打日志、画曲线、做 early stop 判据</strong> → 用 <strong>k3</strong>（无偏 + 非负 + 低方差，三个都要）。别用 k1，它单样本方差是信号的几十上百倍，你画出来的是噪声。</li>
+  <li><strong>参与反向传播</strong> → 按 7.1 速查表 / 7.2 / 7.3 选。</li>
+</ul>
+
+<p>这两件事在代码里就应该是两个独立的量。<strong>把它们混为一谈，是 k3 被误用到 reward 里的根本原因</strong>——大家看 k3 值算得准，就以为放哪儿梯度都准。</p>
+
+<p>另外，如果显存和算力允许，<strong>监控可以直接算 full-vocab 的逐 token 精确 KL</strong>（对词表求和而不是单样本），它对序列 KL 无偏且方差极低。但注意：<strong>这只解决值的方差问题，不解决梯度缺项问题</strong>——它进 loss 时同样缺得分函数项 / Part 2。</p>
+
+<h3 id="75-什么时候偏差可以忽略什么时候必须小心">7.5 什么时候偏差可以忽略，什么时候必须小心</h3>
+
+<p><strong>可以忽略的场景：</strong></p>
+<ul>
+  <li>$\beta$ 很小，KL 只是个弱兜底（现在很多 reasoning RL 干脆 $\beta=0$）。这时候你争论哪个估计器无偏没有意义。</li>
+  <li>训练全程 KL 稳定在很小的量级（比如 &lt;0.01），且<strong>没有出现漂移趋势</strong>。此时 k2/k3 之间、IR/IL 之间的差别都是高阶小量。</li>
+  <li>短序列。Part 2 的缺失量随序列长度增长，短序列上影响有限。</li>
+</ul>
+
+<p><strong>必须小心的场景：</strong></p>
+<ul>
+  <li><strong>长 CoT / 长序列生成。</strong> Part 2 漏掉的是 $T-t$ 项的累加，$T$ 越大漏得越多。这是当前 reasoning RL 最相关的场景。</li>
+  <li><strong>$\beta$ 较大、真的指望 KL 拴住模型。</strong> 这时 k3-IR 那个”一阶抵消”会直接坑你：你以为拴住了，其实绳子是软的。</li>
+  <li><strong>KL 已经涨起来了（&gt;0.1 量级）。</strong> 所有”$s\approx 1$ 的近似”全部失效：k2 值偏 17%，而 k3-IL 那个”正反向 KL 等价”的理由也不再成立——此时你是在实打实地正则一个和你以为的不同的散度（相对误差可达 30%）。<strong>注意这是个恶性循环</strong>：KL 一涨，估计器就变差，正则就更弱，KL 涨得更快。</li>
+  <li><strong>off-policy 程度高</strong>（一批数据复用多个 epoch、mini-batch 切得细、$\pi_\theta$ 和 $\pi_{\text{old}}$ 拉开）。裸估计器（不带 $\rho$）此时既不是反向也不是正向 KL 的梯度，比 on-policy 下的”至少还是个合法散度”更糟（§6.2）。</li>
+  <li><strong>换框架 / 换 KL 实现之后调不出原来的效果。</strong> 大概率不是超参问题，是你从六宫格的一格换到了另一格，有效正则强度整个变了。<strong>$\beta$ 在不同格子之间不可迁移。</strong></li>
+</ul>
+
+<h3 id="76-一条自检清单">7.6 一条自检清单</h3>
+
+<p>改动任何 KL 相关代码后，问自己五个问题：</p>
+
+<ol>
+  <li>我用的是哪个估计器？</li>
+  <li>它是进 reward 还是进 loss？（等价于问：stop-grad 打在采样分布上还是 log 项上？）</li>
+  <li>如果进 loss，token-level 展开有没有 Part 2？</li>
+  <li>数据是不是 off-policy？如果是，重要性权重 $\rho$ 有没有乘进 KL 项——而且是<strong>不 stop-grad</strong> 地乘进去（§6.1，$\rho\equiv1$ 时它的梯度也不是 0）？</li>
+  <li>如果这条数据是当作 reward 用的，批内归一化（如果有）算没算进当前样本自己（§6.4，留一法 vs 直接算）？</li>
+</ol>
+
+<p>五个答案凑齐了，才能说清楚自己的 KL 正则到底是什么。<strong>只回答第 1 个问题——”我用的是 k3，无偏的”——是没有意义的。</strong></p>
+
+<hr />
+
+<h2 id="八一句话总结">八、一句话总结</h2>
+
+<p>如果只能记一句：</p>
+
+<blockquote>
+  <p><strong>“这个估计器是不是无偏的”是个病态问题。正确的问法是”这个估计器 × 这种放法 × 这种 token 展开，梯度是不是无偏的”。而在这三个维度上都最稳的答案，是 k1-in-Reward。</strong></p>
+</blockquote>
+
+<p>有点反讽的是：<strong>最朴素、方差最大、看起来最不该用的 k1，配上最老的 InstructGPT 式放法，反而是唯一一个从头到尾都严格正确的组合。</strong> k2/k3 那些精巧的方差缩减设计，优化的是”值”这个我们其实不太在乎的量——而它们对”梯度”这个我们真正在乎的量的影响，完全取决于被放在哪一格。</p>
+
+<p>不过要给 k3 说句公道话，这也是我写完这篇才想清楚的：<strong>k3 的流行不是因为大家没注意到它不是真梯度，而是因为它被用在了 IL 这个”错得最无害”的位置上。</strong> 在那里它等价于精确的正向 KL 正则——一个合法的、只是方向和设计初心（反向 KL）不同的散度，配上非负性和低方差，在 $\pi_\theta\approx\pi_{\text{ref}}$ 的工作区间内是个相当合理的工程选择；而 off-policy 时（第六节）它连”精确的另一个散度”都不是，必须补上重要性权重 $\rho$ 才能救回来。</p>
+
+<p>真正该警惕的是另外两格：<strong>k3/k2-in-Reward</strong>（正反向 KL 一阶抵消，正则形同虚设）和 <strong>k1-in-Loss</strong>（梯度恒为 0）。这两格才是会让你”以为加了 KL 其实没加”的陷阱——而且它们不报错、曲线看着还挺正常。</p>
+
+<p>繁华落尽见真淳。</p>
+
+<hr />
+
+<h2 id="附录-a对数技巧">附录 A：对数技巧</h2>
+
+<p>全文反复用到：</p>
+
+<p>$$\nabla_\theta \pi_\theta(y|x) = \pi_\theta(y|x)\,\nabla_\theta\log\pi_\theta(y|x)$$</p>
+
+<p>由 $\nabla_\theta\log\pi_\theta = \frac{1}{\pi_\theta}\nabla_\theta\pi_\theta$ 两边乘 $\pi_\theta$ 移项即得。</p>
+
+<p>它的两个直接推论撑起了整篇文章：</p>
+<ul>
+  <li>$\mathbb{E}_{y\sim\pi_\theta}[\nabla_\theta\log\pi_\theta(y)] = 0$ → k1 路径导数消失</li>
+  <li>$\mathbb{E}_{y\sim\pi_\theta}[s(y)] = 1$ → k3 的控制变量项无偏</li>
+</ul>
+
+<h2 id="附录-b数值验证">附录 B：数值验证</h2>
+
+<p>用一个 $K$ 类离散分布（softmax 参数化）暴力验证六宫格的每一格，以及 k3-IR 的正向 KL 恒等式：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="n">K</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">softmax</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="o">/</span><span class="n">e</span><span class="p">.</span><span class="nf">sum</span><span class="p">())(</span><span class="n">np</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">z</span><span class="p">.</span><span class="nf">max</span><span class="p">()))</span>
+
+<span class="n">zr</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">K</span><span class="p">);</span> <span class="n">zt</span> <span class="o">=</span> <span class="n">zr</span> <span class="o">+</span> <span class="mf">0.3</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nf">randn</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">zt</span><span class="p">),</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">zr</span><span class="p">)</span>
+<span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">eye</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:]</span>            <span class="c1"># G[y] = grad_z log p(y)
+</span><span class="n">s</span> <span class="o">=</span> <span class="n">q</span><span class="o">/</span><span class="n">p</span>
+<span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">,</span> <span class="n">k3</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="nf">log</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">s</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">G</span><span class="p">).</span><span class="nf">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># IR: E[c * grad log p]
+</span><span class="n">IR</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">k1</span><span class="sh">'</span><span class="p">:</span> <span class="nf">score</span><span class="p">(</span><span class="n">k1</span><span class="p">),</span> <span class="sh">'</span><span class="s">k2</span><span class="sh">'</span><span class="p">:</span> <span class="nf">score</span><span class="p">(</span><span class="n">k2</span><span class="p">),</span> <span class="sh">'</span><span class="s">k3</span><span class="sh">'</span><span class="p">:</span> <span class="nf">score</span><span class="p">(</span><span class="n">k3</span><span class="p">)}</span>
+<span class="n">IL</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">k1</span><span class="sh">'</span><span class="p">:</span> <span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">G</span><span class="p">).</span><span class="nf">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>                      <span class="c1"># grad k1 = grad log p
+</span>      <span class="sh">'</span><span class="s">k2</span><span class="sh">'</span><span class="p">:</span> <span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">k1</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">G</span><span class="p">).</span><span class="nf">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>        <span class="c1"># grad k2 = k1 * grad log p
+</span>      <span class="sh">'</span><span class="s">k3</span><span class="sh">'</span><span class="p">:</span> <span class="p">(</span><span class="n">p</span><span class="p">[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">s</span><span class="p">)[:,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">G</span><span class="p">).</span><span class="nf">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)}</span>     <span class="c1"># grad k3 = (1-s) * grad log p
+</span></code></pre></div></div>
+
+<p>把上面的结果和有限差分算出的真梯度 $\nabla_z D_{\text{KL}}(p\|q)$ 对比，得到：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--- 距离大    KL=0.07915  |真梯度|=1.763e-01
+   k1_IR   |g|=1.763e-01   误差=8.8e-11   &lt;- 精确
+   k2_IR   |g|=3.461e-02   误差=1.6e-01
+   k3_IR   |g|=3.042e-02   误差=1.6e-01
+   k1_IL   |g|=3.4e-17     误差=1.8e-01   &lt;- 恒为 0
+   k2_IL   |g|=1.763e-01   误差=8.8e-11   &lt;- 精确
+   k3_IL   |g|=1.646e-01   误差=3.0e-02
+   校验 k3_IR == 真梯度 - 正向KL梯度 ? 残差 2.0e-10   &lt;- 恒等式成立
+
+--- 距离很小  KL=0.00122  |真梯度|=3.025e-02
+   k1_IR   |g|=3.025e-02   误差=1.2e-10
+   k3_IR   |g|=2.251e-04   &lt;- 只有真梯度的 0.74%，正则几乎消失
+</code></pre></div></div>
+
+<p>再单独验证 k3-IL 的身份（4.4 的第一个 boxed 式）：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>=== k3_IL vs 正向 KL 梯度 ===
+eps=1.00 : |k3_IL - grad KL(ref||th)| = 1.8e-10    k3_IL 相对真梯度误差 = 31.21%
+eps=0.30 : |k3_IL - grad KL(ref||th)| = 1.5e-10    k3_IL 相对真梯度误差 = 16.20%
+eps=0.10 : |k3_IL - grad KL(ref||th)| = 8.2e-11    k3_IL 相对真梯度误差 =  5.36%
+eps=0.03 : |k3_IL - grad KL(ref||th)| = 1.2e-10    k3_IL 相对真梯度误差 =  0.63%
+</code></pre></div></div>
+
+<p>左列的残差<strong>在任何距离下都是浮点噪声</strong>——k3-IL 恒等于正向 KL 梯度，不是近似。右列则显示它和反向 KL 真梯度的差距随距离缩小而消失。</p>
+
+<p>三个结论被精确验证：</p>
+
+<ol>
+  <li><strong>k1_IR 和 k2_IL 的误差在 $10^{-10}$ 量级</strong>（浮点噪声），是恒等而非近似；</li>
+  <li><strong>k3_IL $\equiv \nabla D_{\text{KL}}(\pi_{\text{ref}}\|\pi_\theta)$（正向 KL 梯度）</strong>，残差 $10^{-10}$，而它相对反向 KL 真梯度的误差 → 0.63%；</li>
+  <li><strong>k3_IR 的梯度模长随 $\pi_\theta\to\pi_{\text{ref}}$ 迅速塌陷到真梯度的 1% 以下</strong>——第 4.4 节”一阶抵消”的直接证据。</li>
+</ol>
+
+<p>第 2 条和第 3 条并列看，就是 4.4 末尾那张表想说的事：同一个 k3，IL 位置上”只差 0.6%”，IR 位置上”只剩 0.7%”。</p>
+
+<h2 id="参考">参考</h2>
+
+<ol>
+  <li><strong>On a few pitfalls in KL divergence gradient estimation for RL.</strong> <a href="https://arxiv.org/abs/2506.09477">arxiv 2506.09477</a> —— 最早给出正确梯度形式并系统分析业界做法的工作，主要面向 in-loss。</li>
+  <li><strong>Rethinking KL Regularization in RLHF: From Value Estimation to Gradient Optimization.</strong> <a href="https://arxiv.org/abs/2510.01555">arxiv 2510.01555</a> —— 细节充分，但缺 token-level 分析。本文”标红 $\theta$”的记法来自这里。</li>
+  <li><strong>A Comedy of Estimators: On KL Regularization in RL Training of LLMs.</strong> <a href="https://arxiv.org/abs/2512.21852">arxiv 2512.21852</a> —— Bengio 组，ICLR’26 被拒。</li>
+  <li>John Schulman, <em>Approximating KL Divergence</em> —— k3 的出处。</li>
+  <li><a href="https://zhuanlan.zhihu.com/p/2019518994252607760">繁华落尽见真淳：LLM 强化学习中 KL 散度的正确形式是 k1 in Reward</a> —— 六宫格、Part 2、”值 vs 梯度”这条主线的分析来自这篇。</li>
+  <li><a href="https://xihuai18.github.io/reinforcement-learning/2025/12/01/kl-estimators-zh.html">RL 中的 KL 估计器选型：从数值无偏到梯度正确</a> —— 第六节的 $\rho$ 记号、on/off-policy 统一梯度框架、$\text{sg}(\rho)k_2\equiv\rho k_3$ 恒等式、reward shaping 下的批内归一化陷阱，都来自这篇。本文”反向/正向 KL”的命名约定也是照这篇（以及标准变分推断惯例）统一过来的。</li>
+</ol>
+
+      </article><aside class="post-cite">
+          <div class="post-cite__head">
+            <span class="eyebrow">引用本文</span>
+            <button type="button" class="post-cite__copy" data-copy-target="#post-cite-bib" data-copied-label="已复制">
+              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span class="post-cite__copy-label">复制 BibTeX</span>
+            </button>
+          </div>
+          <pre class="post-cite__bib" id="post-cite-bib"><code><span class="bib-type">@misc</span>&#123;<span class="bib-key">deng2026kldivergencecorrectform</span>,
+  <span class="bib-field">author</span> = &#123;<span class="bib-value">Huayu  Deng</span>&#125;,
+  <span class="bib-field">title</span>  = &#123;<span class="bib-value">LLM 强化学习中 KL 散度的正确形式是什么</span>&#125;,
+  <span class="bib-field">year</span>   = &#123;<span class="bib-value">2026</span>&#125;,
+  <span class="bib-field">url</span>    = &#123;<span class="bib-value">https://hbell99.github.io/reinforcement-learning/2026/09/02/kl-divergence-correct-form.html</span>&#125;
+&#125;</code></pre>
+        </aside></div>
+
+    <div class="col-lg-3 d-none d-lg-block toc-sidebar-col"><aside class="toc-sidebar" data-toc-sidebar id="toc-sidebar">
+  <div class="toc-sidebar__header">
+    <div class="toc-sidebar__title">目录</div>
+    <button class="toc-toggle-btn" aria-label="切换目录显示" aria-expanded="false" aria-controls="toc-content" data-toc-toggle>
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+  <nav
+    id="toc-content"
+    class="toc js-page-toc"
+    data-toc
+    data-toc-content=".post-content"
+    data-toc-headings="h2"
+    data-toc-min-items="2"
+    aria-label="目录"
+  ></nav>
+</aside>
+
+<!-- Collapsed TOC toggle button (shown when TOC is collapsed) -->
+<button class="toc-collapsed-toggle" aria-label="显示目录" aria-expanded="false" aria-controls="toc-content" data-toc-expand>
+  <i class="fas fa-list"></i>
+</button>
+
+    </div>
+  </div>
+</div>
+
+    </main>
+
+    <!-- Footer --><footer class="sticky-bottom mt-5">
+      <div class="container uk-footer-inner">
+        <span class="uk-footer-copy">
+          &copy; 2026 Huayu  Deng. Built with care in Shanghai.</span><span class="mono-meta uk-footer-updated">last built &middot; Sep 2026</span></div>
+    </footer>
+
+
+    <!-- JavaScripts -->
+    
+  <!-- Medium Zoom JS -->
+  <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js" integrity="sha256-7PhEpEWEW0XXQ0k6kQrPKwuoIomz8R8IYyuU1Qew4P8=" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/zoom.js"></script><!-- Load Common JS -->
+  <script defer src="/assets/js/common.js"></script>
+  <script defer src="/assets/js/blog_enhancements.js" type="text/javascript"></script>
+  <script defer src="/assets/js/sidenotes.js" type="text/javascript"></script>
+  <script defer src="/assets/js/footnote_preview.js" type="text/javascript"></script>
+  <script defer src="/assets/js/copy_code.js" type="text/javascript"></script>
+  <script defer src="/assets/js/toc.js" type="text/javascript"></script>
+  <script defer src="/assets/js/venue_filter.js" type="text/javascript"></script>
+  <script defer src="/assets/js/bibtex_copy.js" type="text/javascript"></script>
+  <script defer src="/assets/js/post_cite.js" type="text/javascript"></script>
+
+    
+  <script async src="https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js"></script>
+  <script async src="https://badge.dimensions.ai/badge.js"></script>
+
+    <!-- FOUC prevention for math: hide post content until MathJax finishes.
+       Flag `<html class="math-loading">` set synchronously; removed after render. -->
+  <script>
+    (function () {
+      if (!document.querySelector || !document.body && !document.documentElement) return;
+      // Only hide when a post-content area contains raw $ or $$ delimiters.
+      // We can't query DOM here (head), so we always flag and let JS remove it on ready.
+      document.documentElement.classList.add('math-loading');
+      // Hard fallback: remove the flag after 2.5s regardless of MathJax state.
+      setTimeout(function () {
+        document.documentElement.classList.remove('math-loading');
+        document.documentElement.classList.add('math-ready');
+      }, 2500);
+    })();
+  </script>
+  <style>
+    html.math-loading .post-content {
+      opacity: 0;
+      transition: opacity 160ms ease;
+    }
+    html.math-ready .post-content,
+    html:not(.math-loading) .post-content {
+      opacity: 1;
+      transition: opacity 160ms ease;
+    }
+    /* Inherit theme text color so dark mode renders math correctly */
+    .post-content mjx-container,
+    .post-content mjx-container mjx-math {
+      color: inherit;
+    }
+    /* Display math: allow horizontal scroll; fade hint appears only when content overflows */
+    .post-content mjx-container[display="true"] {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25rem 0.1rem;
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
+      scrollbar-width: thin;
+    }
+    .post-content mjx-container[display="true"].has-overflow {
+      mask-image: linear-gradient(to right, black 0, black calc(100% - 18px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 18px), transparent 100%);
+    }
+    /* Equation number alignment */
+    .post-content mjx-container[display="true"] mjx-labels {
+      color: var(--global-text-color-light);
+    }
+  </style>
+  <!-- MathJax 3.x with comprehensive configuration -->
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        tags: 'ams',
+        // Support all common math delimiters
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        processRefs: true,
+        // Common macros for convenience
+        macros: {
+          RR: '\\mathbb{R}',
+          NN: '\\mathbb{N}',
+          ZZ: '\\mathbb{Z}',
+          CC: '\\mathbb{C}',
+          EE: '\\mathbb{E}',
+          PP: '\\mathbb{P}',
+          bm: ['\\boldsymbol{#1}', 1],
+          argmax: '\\operatorname*{arg\\,max}',
+          argmin: '\\operatorname*{arg\\,min}',
+          sgn: '\\operatorname{sgn}',
+          KL: '\\mathrm{KL}',
+          Var: '\\operatorname{Var}',
+          Cov: '\\operatorname{Cov}',
+          tr: '\\operatorname{tr}',
+          diag: '\\operatorname{diag}'
+        },
+        // AMS packages
+        packages: {'[+]': ['ams', 'boldsymbol', 'newcommand']}
+      },
+      loader: {
+        load: ['[tex]/ams', '[tex]/boldsymbol', '[tex]/newcommand']
+      },
+      options: {
+        // Skip math rendering in these HTML elements
+        skipHtmlTags: [
+          'script', 'noscript', 'style', 'textarea', 'pre', 'code',
+          'annotation', 'annotation-xml', 'kbd', 'samp', 'var'
+        ],
+        // Fix issues with underscores being converted to <em> by HTML
+        processHtmlClass: 'mathjax-process',
+        ignoreHtmlClass: 'tex2jax_ignore|no-mathjax',
+        // Render math even with HTML entities
+        renderActions: {
+          findScript: [10, function (doc) {
+            // Pre-process to fix HTML entity issues in math
+            for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            }
+          }, '']
+        }
+      },
+      svg: {
+        fontCache: 'global',
+        scale: 1.0
+      },
+      chtml: {
+        scale: 1.0,
+        matchFontHeight: true
+      },
+      startup: {
+        ready: function () {
+          MathJax.startup.defaultReady();
+          MathJax.startup.promise.then(() => {
+            // Clear FOUC flag so post-content fades in
+            document.documentElement.classList.remove('math-loading');
+            document.documentElement.classList.add('math-ready');
+            // Detect display-math overflow once, then on resize (debounced)
+            const detectOverflow = () => {
+              try {
+                document.querySelectorAll('.post-content mjx-container[display="true"]').forEach(el => {
+                  if (el.scrollWidth > el.clientWidth + 1) {
+                    el.classList.add('has-overflow');
+                  } else {
+                    el.classList.remove('has-overflow');
+                  }
+                });
+              } catch (_) { /* ignore */ }
+            };
+            detectOverflow();
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+              clearTimeout(resizeTimer);
+              resizeTimer = setTimeout(detectOverflow, 150);
+            }, { passive: true });
+          });
+        }
+      }
+    };
+  </script>
+  <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js"></script>
+  
+  <!-- Pre-processing script to protect math from Markdown/HTML interference -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Fix underscores in math that were converted to <em> by Markdown
+      function fixMathUnderscores() {
+        const mathContainers = document.querySelectorAll('.MathJax, .MathJax_Display, mjx-container');
+        // This runs before MathJax, so we need to fix raw content
+        const content = document.querySelector('.post-content, article');
+        if (!content) return;
+        
+        // Find math delimiters and restore any <em> or <strong> inside them
+        const html = content.innerHTML;
+        
+        // Pattern to find math blocks and restore underscore formatting
+        // This is a fallback; the main protection is in the Jekyll plugin
+      }
+      
+      // Fix HTML entities in display math blocks
+      function fixHtmlEntities() {
+        document.querySelectorAll('.language-plaintext.highlighter-rouge').forEach(el => {
+          // Check if this looks like an HTML figure that wasn't rendered
+          const text = el.textContent;
+          if (text.includes('<img') || text.includes('<figure') || text.includes('<figcaption')) {
+            // This is raw HTML that should be rendered - replace with actual HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = text;
+            el.replaceWith(...temp.childNodes);
+          }
+        });
+      }
+      
+      fixHtmlEntities();
+    });
+  </script>
+
+    <!-- Pseudocode -->
+  <script defer src="https://cdn.jsdelivr.net/npm/pseudocode@2.4.1/build/pseudocode.min.js" integrity="sha256-aVkDxqyzrB+ExUsOY9PdyelkDhn/DfrjWu08aVpqNlo=" crossorigin="anonymous"></script>
+  <script defer src="/assets/js/pseudocode-init.js" type="text/javascript"></script>
+    <!-- Mermaid -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10.9.3/dist/mermaid.min.js"></script>
+  <script defer src="/assets/js/mermaid-init.js" type="text/javascript"></script>
+    
+    
+
+<!-- Scroll progress indicator. The bar lives inside the fixed navbar so iOS
+     Safari cannot drift it relative to the navbar during address-bar reflow. -->
+<script type="text/javascript">
+  (function () {
+    var bar = document.getElementById("scroll-progress-bar");
+    if (!bar) return;
+
+    function update() {
+      var doc = document.documentElement;
+      var distance = Math.max(
+        (doc.scrollHeight || document.body.scrollHeight) - window.innerHeight,
+        0
+      );
+      if (distance <= 0) {
+        bar.style.width = "0%";
+        return;
+      }
+      var pos = window.scrollY || window.pageYOffset || 0;
+      var pct = Math.max(0, Math.min(100, (pos / distance) * 100));
+      bar.style.width = pct + "%";
+    }
+
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function () {
+        update();
+        ticking = false;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    if (document.readyState === "complete") {
+      update();
+    } else {
+      window.addEventListener("load", update, { once: true });
+    }
+  })();
+</script>
+
+  </body>
+</html>
