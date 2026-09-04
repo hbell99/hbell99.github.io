@@ -82,7 +82,7 @@
   --s-8: 64px;
   --s-9: 96px;
   /* ---- Layout ----------------------------------------------------------- */
-  --page-max: 1120px;
+  --page-max: 1240px;
   --prose-max: 68ch;
   --gutter: 24px;
   /* ---- Type tokens (quoted so multi-word names parse as CSS strings) ---- */
@@ -4881,7 +4881,7 @@ html[data-theme=dark] .publications .venue-tag.active-filter .venue-name {
   font-family: var(--font-serif);
   color: var(--fg-2);
   font-size: 1rem;
-  max-width: var(--prose-max);
+  max-width: none;
   margin-bottom: var(--s-4);
 }
 .about-selected-papers__intro ol, .about-selected-papers__intro ul, .about-selected-papers .about-selected-papers__intro ol, .about-selected-papers .about-selected-papers__intro ul,
@@ -6292,7 +6292,7 @@ hr {
   }
 }
 :root {
-  --max-content-width: 1120px;
+  --max-content-width: 1240px;
 }
 
 /* cache bust */
