@@ -1237,7 +1237,7 @@ html[data-theme='dark'] .publications .venue-tag.active-filter .venue-name { col
     font-family: var(--font-serif);
     color: var(--fg-2);
     font-size: 1rem;
-    max-width: var(--prose-max);
+    max-width: none;
     margin-bottom: var(--s-4);
     ol, ul { padding-left: 22px; margin: 6px 0 0; }
     li { margin: 2px 0; }
