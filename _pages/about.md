@@ -19,14 +19,15 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-I am a PhD student in the Wu Wenjun Honors Class in Artificial Intelligence at Shanghai Jiao Tong University, advised by Yunbo Wang and Xiaokang Yang. Before that, I completed my B.Eng. in Computer Science (IEEE Honors Class) at SJTU. I am currently a research intern at RedNote (小红书), working on large language model post-training.
+I am a PhD student in the Wu Wenjun Honors Class (吴文俊人工智能荣誉博士班) in Artificial Intelligence at Shanghai Jiao Tong University, advised by [Yunbo Wang](https://wyb15.github.io/) and [Xiaokang Yang](https://scholar.google.com/citations?user=yDEavdMAAAAJ&hl=en). Before that, I completed my B.Eng. in Computer Science (IEEE Honors Class) at Shanghai Jiao Tong University. I am currently a research intern at RedNote (小红书), working on large language model post-training.
 
-My research spans **AI for Physics** and **LLM Post-training & Embodied Interaction**:
+My research spans **LLM Post-training & Embodied Interaction** and **AI for Physics**:
 
+- **LLM Post-training & Embodied Interaction**
+  - On-policy distillation and reinforcement learning
+  - Test-time training and long-context reasoning for LLMs
+  - Transferring interaction knowledge from video to physical control
 - **AI for Physics**
   - Active sensing and world models for continuum field reconstruction
   - Learning hidden physical dynamics from visual observations
   - Adaptive, multi-scale simulation of physical systems
-- **LLM Post-training & Embodied Interaction**
-  - Test-time training and long-context reasoning for LLMs
-  - Transferring interaction knowledge from video to physical control
